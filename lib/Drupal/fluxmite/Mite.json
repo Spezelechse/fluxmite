@@ -1,0 +1,217 @@
+{
+  "name": "Mite",
+  "apiVersion": "1.0",
+  "description": "Mite API",
+  "operations": {
+  	"GetUsers": {
+		"httpMethod": "GET",
+      	"uri": "/users.xml",
+      	"summary": "Lists all active users, sorted by name.",
+      	"parameters": {
+      	}
+  	},
+  	"GetServices": {
+		"httpMethod": "GET",
+      	"uri": "/services.xml",
+      	"summary": "Lists all active services, sorted by name.",
+      	"parameters": {
+      	}
+  	},
+  	"GetProjects": {
+  		"httpMethod": "GET",
+      	"uri": "/projects.xml",
+      	"summary": "Lists all active projects, sorted by name.",
+      	"parameters": {
+      	}
+  	},
+  	"GetCustomers": {
+  		"httpMethod": "GET",
+      	"uri": "/customers.xml",
+      	"summary": "Lists all active customers, sorted by name.",
+      	"parameters": {
+      	}
+  	},
+  	"GetTimeEntries": {
+  		"httpMethod": "GET",
+      	"uri": "/time_entries.xml",
+      	"summary": "Returns all time entries for all users, sorted in reverse chronological order (date_at). A user of role time tracker can only access his own time entries.",
+      	"parameters": {
+      	}
+  	},
+  	"GetArchivedUsers": {
+		"httpMethod": "GET",
+      	"uri": "/users/archived.xml",
+      	"summary": "Lists all archived users, sorted by name.",
+      	"parameters": {
+      	}
+  	},
+  	"GetArchivedServices": {
+		"httpMethod": "GET",
+      	"uri": "/services/archived.xml",
+      	"summary": "Lists all archived services, sorted by name.",
+      	"parameters": {
+      	}
+  	},
+  	"GetArchivedProjects": {
+  		"httpMethod": "GET",
+      	"uri": "/projects/archived.xml",
+      	"summary": "Lists all archived projects, sorted by name.",
+      	"parameters": {
+      	}
+  	},
+  	"GetArchivedCustomers": {
+  		"httpMethod": "GET",
+      	"uri": "/customers/archived.xml",
+      	"summary": "Lists all archived customers, sorted by name.",
+      	"parameters": {
+      	}
+  	},
+  	"GetTodaysTimeEntries": {
+  		"httpMethod": "GET",
+      	"uri": "/daily.xml",
+      	"summary": "Lists today's time entries for the user in question.",
+      	"parameters": {
+      	}
+  	},
+  	"GetDailyTimeEntries": {
+  		"httpMethod": "GET",
+      	"uri": "/daily/{day}.xml",
+      	"summary": "Lists all time entries on the given date for the user in question.",
+      	"parameters": {
+      	}
+  	},
+	"GetUser": {
+		"httpMethod": "GET",
+      	"uri": "/users/{id}.xml",
+      	"summary": "Returns a single user.",
+      	"parameters": {
+      	}
+  	},
+  	"GetService": {
+		"httpMethod": "GET",
+      	"uri": "/services/{id}.xml",
+      	"summary": "Returns a single service",
+      	"parameters": {
+      	}
+  	},
+  	"GetProject": {
+  		"httpMethod": "GET",
+      	"uri": "/projects/{id}.xml",
+      	"summary": "Returns a single project",
+      	"parameters": {
+      	}
+  	},
+  	"GetCustomer": {
+  		"httpMethod": "GET",
+      	"uri": "/customers/{id}.xml",
+      	"summary": "Returns a single customer",
+      	"parameters": {
+      	}
+  	},
+  	"GetTimeEntry": {
+  		"httpMethod": "GET",
+      	"uri": "/time_entries/{id}.xml",
+      	"summary": "Returns a single time entry",
+      	"parameters": {
+      	}
+  	},
+  	"GetAccount": {
+  		"httpMethod": "GET",
+      	"uri": "/account.xml",
+      	"summary": "Returns the account currently used",
+      	"parameters": {
+      	}
+  	},
+  	"GetMyself": {
+  		"httpMethod": "GET",
+      	"uri": "/myself.xml",
+      	"summary": "Returns the user signed in to the mite.api at the moment.",
+      	"parameters": {
+      	}
+  	},
+  	"PostService":{
+  		"httpMethod": "POST",
+      	"uri": "/services.xml",
+      	"summary": "Creates a new service. All parameters are optional, except of the name.",
+      	"parameters": {
+      	}
+  	},
+  	"PostProject":{
+  		"httpMethod": "POST",
+      	"uri": "/projects.xml",
+      	"summary": "Creates a new project. All parameters are optional, except of the name.",
+      	"parameters": {
+      	}
+  	},
+  	"PostCustomer":{
+		"httpMethod": "POST",
+      	"uri": "/customers.xml",
+      	"summary": "Creates a new customer. All parameters are optional, except of the name.",
+      	"parameters": {
+      	}
+  	},
+  	"PostTimeEntry":{
+  		"httpMethod": "POST",
+      	"uri": "/time_entries.xml",
+      	"summary": "Creates a new time entry. All parameters are optional.",
+      	"parameters": {
+      	}
+  	},
+  	"PutService": {
+		"httpMethod": "PUT",
+      	"uri": "/services/{id}.xml",
+      	"summary": "Updates the service with the given parameters. If you change the hourly rate, it is possible to apply the new rate to all existing time entries by setting the additional parameter update_hourly_rate_on_time_entries to true. By default the new hourly rate does not apply to existing time entries.",
+      	"parameters": {
+      	}
+  	},
+  	"PutProject": {
+		"httpMethod": "PUT",
+      	"uri": "/projects/{id}.xml",
+      	"summary": "Updates the project with the given parameters. If you change the hourly rate, it is possible to apply the new rate to all existing time entries by setting the additional parameter update_hourly_rate_on_time_entries to true. By default the new hourly rate does not apply to existing time entries.",
+      	"parameters": {
+      	}
+  	},
+  	"PutCustomer": {
+		"httpMethod": "PUT",
+      	"uri": "/customers/{id}.xml",
+      	"summary": "Updates the customer with the given parameters. If you change the hourly rate, it is possible to apply the new rate to all existing time entries by setting the additional parameter update_hourly_rate_on_time_entries to true. By default the new hourly rate does not apply to existing time entries.",
+      	"parameters": {
+      	}
+  	},
+  	"PutTimeEntry": {
+		"httpMethod": "PUT",
+      	"uri": "/time_entries/{id}.xml",
+      	"summary": "Updates the time entry with the given parameters. The time entry can belong to any user of the account, as long as the current user is a administrator or the account owner. You can specify the same parameters you use when creating a time entry.",
+      	"parameters": {
+      	}
+  	},
+  	"DeleteService": {
+		"httpMethod": "DELETE",
+      	"uri": "/services/{id}.xml",
+      	"summary": "Deletes a service. This is only possible if there are no time entries attached to this service.",
+      	"parameters": {
+      	}
+  	},
+  	"DeleteProject": {
+		"httpMethod": "DELETE",
+      	"uri": "/projects/{id}.xml",
+      	"summary": "Deletes a project. This is only possible if there are no time entries attached to this project.",
+      	"parameters": {
+      	}
+  	},
+  	"DeleteCustomer": {
+		"httpMethod": "DELETE",
+      	"uri": "customers/{id}.xml",
+      	"summary": "Deletes the customer. This is only possible if there are no projects attached to this customer.",
+      	"parameters": {
+      	}
+  	},
+  	"DeleteTimeEntries": {
+		"httpMethod": "DELETE",
+      	"uri": "time_entries/{id}.xml",
+      	"summary": "Deletes a time entry.",
+      	"parameters": {
+      	}
+  	}
+  }
+}

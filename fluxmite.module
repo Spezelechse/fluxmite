@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * Main module file.
+ */
+
+/**
+ * Implements hook_rules_category_info().
+ */
+function fluxmite_rules_category_info() {
+  $info =  array();
+  // Use the same icon as for the service plugin.
+  $info['fluxmite'] = array(
+    'label' => t('Mite'),
+  )+fluxservice_get_service_icon_info('fluxmite');
+
+  return $info;
+}
+
+/**
+ * Implements hook_fluxservice_plugin_directory().
+ */
+function fluxmite_fluxservice_plugin_directory() {
+  return 'lib/Drupal/fluxmite/Plugin';
+}

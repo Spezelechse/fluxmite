@@ -1,0 +1,21 @@
+{
+  "name": "drupal/fluxmite",
+  "type": "drupal-module",
+  "description": "Provides integration for the Mite API.",
+  "homepage": "",
+  "license": "GPL-2.0",
+  "authors": [
+    {
+      "name": "Patrick Geissler",
+      "email": "",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "issues": ""
+  },
+  "require": {
+    "php": ">=5.3.2",
+    "guzzle/guzzle": "dev-master"
+  }
+}
