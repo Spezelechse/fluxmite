@@ -5,198 +5,961 @@
   "operations": {
   	"GetUsers": {
 		"httpMethod": "GET",
-      	"uri": "/users.xml",
+      	"uri": "users.xml",
       	"summary": "Lists all active users, sorted by name.",
       	"parameters": {
+          "email": {
+            "location": "query",
+            "type": "string",
+            "description": "filter the output via email adress"
+          },
+          "name": {
+            "location": "query",
+            "type": "string",
+            "description": "filter the output via user name"
+          },
+          "limit": {
+            "location": "query",
+            "type": "integer",
+            "description": "limits the output by the given number"
+          }
+          ,
+          "page": {
+            "location": "query",
+            "type": "integer",
+            "description": "if a limit is set, the page can be changed with this parameter"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"GetServices": {
 		"httpMethod": "GET",
-      	"uri": "/services.xml",
+      	"uri": "services.xml",
       	"summary": "Lists all active services, sorted by name.",
       	"parameters": {
+          "name": {
+            "location": "query",
+            "type": "string",
+            "description": "filter the output via service name"
+          },
+          "limit": {
+            "location": "query",
+            "type": "integer",
+            "description": "limits the output by the given number"
+          },
+          "page": {
+            "location": "query",
+            "type": "integer",
+            "description": "if a limit is set, the page can be changed with this parameter"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"GetProjects": {
   		"httpMethod": "GET",
-      	"uri": "/projects.xml",
+      	"uri": "projects.xml",
       	"summary": "Lists all active projects, sorted by name.",
       	"parameters": {
+          "name": {
+            "location": "query",
+            "type": "string",
+            "description": "filter the output via project name"
+          },
+          "limit": {
+            "location": "query",
+            "type": "integer",
+            "description": "limits the output by the given number"
+          },
+          "page": {
+            "location": "query",
+            "type": "integer",
+            "description": "if a limit is set, the page can be changed with this parameter"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"GetCustomers": {
   		"httpMethod": "GET",
-      	"uri": "/customers.xml",
+      	"uri": "customers.xml",
       	"summary": "Lists all active customers, sorted by name.",
       	"parameters": {
+          "name": {
+            "location": "query",
+            "type": "string",
+            "description": "filter the output via customer name"
+          },
+          "limit": {
+            "location": "query",
+            "type": "integer",
+            "description": "limits the output by the given number"
+          },
+          "page": {
+            "location": "query",
+            "type": "integer",
+            "description": "if a limit is set, the page can be changed with this parameter"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
+    "GetBookmarks": {
+      "httpMethod": "GET",
+        "uri": "time_entries/bookmarks.xml",
+        "summary": "Lists all bookmarks, sorted by name.",
+        "parameters": {
+          "limit": {
+            "location": "query",
+            "type": "integer",
+            "description": "limits the output by the given number"
+          },
+          "page": {
+            "location": "query",
+            "type": "integer",
+            "description": "if a limit is set, the page can be changed with this parameter"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
+        }
+    },
   	"GetTimeEntries": {
   		"httpMethod": "GET",
-      	"uri": "/time_entries.xml",
+      	"uri": "time_entries.xml",
       	"summary": "Returns all time entries for all users, sorted in reverse chronological order (date_at). A user of role time tracker can only access his own time entries.",
       	"parameters": {
+          "customer_id": {
+            "location": "query",
+            "type": "integer",
+            "description": "ID of the customer"
+          },
+          "project_id": {
+            "location": "query",
+            "type": "integer",
+            "description": "ID of the project"
+          },
+          "service_id": {
+            "location": "query",
+            "type": "integer",
+            "description": "ID of the service"
+          },
+          "user_id": {
+            "location": "query",
+            "type": "integer",
+            "description": "ID of the user"
+          },
+          "billable": {
+            "location": "query",
+            "type": "boolean",
+            "description": "true or false"
+          },
+          "note": {
+            "location": "query",
+            "type": "string",
+            "description": "Search within the notes of time entries"
+          },
+          "at": {
+            "location": "query",
+            "type": "string",
+            "description": "today, yesterday, this_week, last_week, this_month, last_month or dates formatted YYYY-MM-DD"
+          },
+          "from": {
+            "location": "query",
+            "type": "string",
+            "description": "formatted YYYY-MM-DD"
+          },
+          "to": {
+            "location": "query",
+            "type": "string",
+            "description": "formatted YYYY-MM-DD"
+          },
+          "locked": {
+            "location": "query",
+            "type": "boolean",
+            "description": "true or false"
+          },
+          "limit": {
+            "location": "query",
+            "type": "integer",
+            "description": "limits the output by the given number"
+          },
+          "page": {
+            "location": "query",
+            "type": "integer",
+            "description": "if a limit is set, the page can be changed with this parameter"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
+    "GetTimeEntriesGrouped": {
+      "httpMethod": "GET",
+        "uri": "time_entries.xml",
+        "summary": "Returns all time entries for all users grouped, sorted in reverse chronological order (date_at). A user of role time tracker can only access his own time entries.",
+        "parameters": {
+          "group_by": {
+            "location": "query",
+            "type": "string",
+            "required": true,
+            "description": "groups the response (possible values: customer, project, service, user, day, week, month, year). Several parameters can be combined. Separate several parameters by comma (e.g.: »project,user«). The order of the parameters decides on how the results will be sorted."
+          },
+          "customer_id": {
+            "location": "query",
+            "type": "integer",
+            "description": "ID of the customer"
+          },
+          "project_id": {
+            "location": "query",
+            "type": "integer",
+            "description": "ID of the project"
+          },
+          "service_id": {
+            "location": "query",
+            "type": "integer",
+            "description": "ID of the service"
+          },
+          "user_id": {
+            "location": "query",
+            "type": "integer",
+            "description": "ID of the user"
+          },
+          "billable": {
+            "location": "query",
+            "type": "boolean",
+            "description": "true or false"
+          },
+          "note": {
+            "location": "query",
+            "type": "string",
+            "description": "Search within the notes of time entries"
+          },
+          "at": {
+            "location": "query",
+            "type": "string",
+            "description": "today, yesterday, this_week, last_week, this_month, last_month or dates formatted YYYY-MM-DD"
+          },
+          "from": {
+            "location": "query",
+            "type": "string",
+            "description": "formatted YYYY-MM-DD"
+          },
+          "to": {
+            "location": "query",
+            "type": "string",
+            "description": "formatted YYYY-MM-DD"
+          },
+          "locked": {
+            "location": "query",
+            "type": "boolean",
+            "description": "true or false"
+          },
+          "limit": {
+            "location": "query",
+            "type": "integer",
+            "description": "limits the output by the given number"
+          },
+          "page": {
+            "location": "query",
+            "type": "integer",
+            "description": "if a limit is set, the page can be changed with this parameter"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
+        }
+    },
+    "GetTimeEntriesFromBookmark": {
+      "httpMethod": "GET",
+        "uri": "time_entries/bookmarks/{id}/follow.xml",
+        "summary": "Returns all time entries for all users filtered by bookmark, sorted in reverse chronological order (date_at). A user of role time tracker can only access his own time entries.",
+        "parameters": {
+          "id": {
+            "location": "uri",
+            "type": "string",
+            "required": true,
+            "description": "use bookmark to filter time entries"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
+        }
+    },
   	"GetArchivedUsers": {
 		"httpMethod": "GET",
-      	"uri": "/users/archived.xml",
+      	"uri": "users/archived.xml",
       	"summary": "Lists all archived users, sorted by name.",
       	"parameters": {
+          "email": {
+            "location": "query",
+            "type": "string",
+            "description": "filter the output via email adress"
+          },
+          "name": {
+            "location": "query",
+            "type": "string",
+            "description": "filter the output via user name"
+          },
+          "limit": {
+            "location": "query",
+            "type": "integer",
+            "description": "limits the output by the given number"
+          }
+          ,
+          "page": {
+            "location": "query",
+            "type": "integer",
+            "description": "if a limit is set, the page can be changed with this parameter"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"GetArchivedServices": {
 		"httpMethod": "GET",
-      	"uri": "/services/archived.xml",
+      	"uri": "services/archived.xml",
       	"summary": "Lists all archived services, sorted by name.",
       	"parameters": {
+          "name": {
+            "location": "query",
+            "type": "string",
+            "description": "filter the output via user name"
+          },
+          "limit": {
+            "location": "query",
+            "type": "integer",
+            "description": "limits the output by the given number"
+          }
+          ,
+          "page": {
+            "location": "query",
+            "type": "integer",
+            "description": "if a limit is set, the page can be changed with this parameter"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"GetArchivedProjects": {
   		"httpMethod": "GET",
-      	"uri": "/projects/archived.xml",
+      	"uri": "projects/archived.xml",
       	"summary": "Lists all archived projects, sorted by name.",
       	"parameters": {
+          "name": {
+            "location": "query",
+            "type": "string",
+            "description": "filter the output via user name"
+          },
+          "limit": {
+            "location": "query",
+            "type": "integer",
+            "description": "limits the output by the given number"
+          }
+          ,
+          "page": {
+            "location": "query",
+            "type": "integer",
+            "description": "if a limit is set, the page can be changed with this parameter"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"GetArchivedCustomers": {
   		"httpMethod": "GET",
-      	"uri": "/customers/archived.xml",
+      	"uri": "customers/archived.xml",
       	"summary": "Lists all archived customers, sorted by name.",
       	"parameters": {
+          "name": {
+            "location": "query",
+            "type": "string",
+            "description": "filter the output via user name"
+          },
+          "limit": {
+            "location": "query",
+            "type": "integer",
+            "description": "limits the output by the given number"
+          }
+          ,
+          "page": {
+            "location": "query",
+            "type": "integer",
+            "description": "if a limit is set, the page can be changed with this parameter"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"GetTodaysTimeEntries": {
   		"httpMethod": "GET",
-      	"uri": "/daily.xml",
+      	"uri": "daily.xml",
       	"summary": "Lists today's time entries for the user in question.",
       	"parameters": {
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"GetDailyTimeEntries": {
   		"httpMethod": "GET",
-      	"uri": "/daily/{day}.xml",
+      	"uri": "daily/{day}.xml",
       	"summary": "Lists all time entries on the given date for the user in question.",
       	"parameters": {
+          "day": {
+            "location": "uri",
+            "type": "string",
+            "required": true,
+            "description": "formatted YYYY/MM/DD"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
 	"GetUser": {
 		"httpMethod": "GET",
-      	"uri": "/users/{id}.xml",
+      	"uri": "users/{id}.xml",
       	"summary": "Returns a single user.",
       	"parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "user id"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"GetService": {
 		"httpMethod": "GET",
-      	"uri": "/services/{id}.xml",
+      	"uri": "services/{id}.xml",
       	"summary": "Returns a single service",
       	"parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "service id"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"GetProject": {
   		"httpMethod": "GET",
-      	"uri": "/projects/{id}.xml",
+      	"uri": "projects/{id}.xml",
       	"summary": "Returns a single project",
       	"parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "project id"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"GetCustomer": {
   		"httpMethod": "GET",
-      	"uri": "/customers/{id}.xml",
+      	"uri": "customers/{id}.xml",
       	"summary": "Returns a single customer",
       	"parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "customer id"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
+    "GetBookmark": {
+      "httpMethod": "GET",
+        "uri": "time_entries/bookmarks/{id}.xml",
+        "summary": "Returns a single customer",
+        "parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "bookmark id"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
+        }
+    },
   	"GetTimeEntry": {
   		"httpMethod": "GET",
-      	"uri": "/time_entries/{id}.xml",
+      	"uri": "time_entries/{id}.xml",
       	"summary": "Returns a single time entry",
       	"parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "time entry id"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
-  	"GetAccount": {
+    "GetTracker": {
+      "httpMethod": "GET",
+        "uri": "tracker.xml",
+        "summary": "Returns the running timetracker",
+        "parameters": {
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
+        }
+    },
+    "GetAccount": {
   		"httpMethod": "GET",
-      	"uri": "/account.xml",
+      	"uri": "account.xml",
       	"summary": "Returns the account currently used",
       	"parameters": {
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"GetMyself": {
   		"httpMethod": "GET",
-      	"uri": "/myself.xml",
+      	"uri": "myself.xml",
       	"summary": "Returns the user signed in to the mite.api at the moment.",
       	"parameters": {
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"PostService":{
   		"httpMethod": "POST",
-      	"uri": "/services.xml",
+      	"uri": "services.xml",
       	"summary": "Creates a new service. All parameters are optional, except of the name.",
       	"parameters": {
+          "data": {
+            "location": "body",
+            "type": "string",
+            "required": true,
+            "description": "request data"
+          },
+          "Content-type": {
+            "location": "header",
+            "type": "string",
+            "description": "request content type, do not change",
+            "default": "application/xml",
+            "static": true
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"PostProject":{
   		"httpMethod": "POST",
-      	"uri": "/projects.xml",
+      	"uri": "projects.xml",
       	"summary": "Creates a new project. All parameters are optional, except of the name.",
       	"parameters": {
+          "data": {
+            "location": "body",
+            "type": "string",
+            "required": true,
+            "description": "request data"
+          },
+          "Content-type": {
+            "location": "header",
+            "type": "string",
+            "description": "request content type, do not change",
+            "default": "application/xml",
+            "static": true
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"PostCustomer":{
 		"httpMethod": "POST",
-      	"uri": "/customers.xml",
+      	"uri": "customers.xml",
       	"summary": "Creates a new customer. All parameters are optional, except of the name.",
       	"parameters": {
+          "data": {
+            "location": "body",
+            "type": "string",
+            "required": true,
+            "description": "request data"
+          },
+          "Content-type": {
+            "location": "header",
+            "type": "string",
+            "description": "request content type, do not change",
+            "default": "application/xml",
+            "static": true
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"PostTimeEntry":{
   		"httpMethod": "POST",
-      	"uri": "/time_entries.xml",
+      	"uri": "time_entries.xml",
       	"summary": "Creates a new time entry. All parameters are optional.",
       	"parameters": {
+          "data": {
+            "location": "body",
+            "type": "string",
+            "required": true,
+            "description": "request data"
+          },
+          "Content-type": {
+            "location": "header",
+            "type": "string",
+            "description": "request content type, do not change",
+            "default": "application/xml",
+            "static": true
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"PutService": {
 		"httpMethod": "PUT",
-      	"uri": "/services/{id}.xml",
+      	"uri": "services/{id}.xml",
       	"summary": "Updates the service with the given parameters. If you change the hourly rate, it is possible to apply the new rate to all existing time entries by setting the additional parameter update_hourly_rate_on_time_entries to true. By default the new hourly rate does not apply to existing time entries.",
       	"parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "time entry id"
+          },
+          "data": {
+            "location": "body",
+            "type": "string",
+            "description": "request data"
+          },
+          "Content-type": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "request content type, do not change",
+            "default": "application/xml",
+            "static": true
+          },
+          "update_hourly_rate_on_time_entries": {
+            "location": "header",
+            "type": "boolean",
+            "description": "request content type, do not change",
+            "default": false
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"PutProject": {
 		"httpMethod": "PUT",
-      	"uri": "/projects/{id}.xml",
+      	"uri": "projects/{id}.xml",
       	"summary": "Updates the project with the given parameters. If you change the hourly rate, it is possible to apply the new rate to all existing time entries by setting the additional parameter update_hourly_rate_on_time_entries to true. By default the new hourly rate does not apply to existing time entries.",
       	"parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "time entry id"
+          },
+          "data": {
+            "location": "body",
+            "type": "string",
+            "description": "request data"
+          },
+          "Content-type": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "request content type, do not change",
+            "default": "application/xml",
+            "static": true
+          },
+          "update_hourly_rate_on_time_entries": {
+            "location": "header",
+            "type": "boolean",
+            "description": "request content type, do not change",
+            "default": false
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"PutCustomer": {
 		"httpMethod": "PUT",
-      	"uri": "/customers/{id}.xml",
+      	"uri": "customers/{id}.xml",
       	"summary": "Updates the customer with the given parameters. If you change the hourly rate, it is possible to apply the new rate to all existing time entries by setting the additional parameter update_hourly_rate_on_time_entries to true. By default the new hourly rate does not apply to existing time entries.",
       	"parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "time entry id"
+          },
+          "data": {
+            "location": "body",
+            "type": "string",
+            "description": "request data"
+          },
+          "Content-type": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "request content type, do not change",
+            "default": "application/xml",
+            "static": true
+          },
+          "update_hourly_rate_on_time_entries": {
+            "location": "header",
+            "type": "boolean",
+            "description": "request content type, do not change",
+            "default": false
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"PutTimeEntry": {
 		"httpMethod": "PUT",
-      	"uri": "/time_entries/{id}.xml",
+      	"uri": "time_entries/{id}.xml",
       	"summary": "Updates the time entry with the given parameters. The time entry can belong to any user of the account, as long as the current user is a administrator or the account owner. You can specify the same parameters you use when creating a time entry.",
       	"parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "time entry id"
+          },
+          "data": {
+            "location": "body",
+            "type": "string",
+            "description": "request data"
+          },
+          "Content-type": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "request content type, do not change",
+            "default": "application/xml",
+            "static": true
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
+    "StartTracker": {
+    "httpMethod": "PUT",
+        "uri": "tracker/{id}.xml",
+        "summary": "Starts the time tracker on the time entry with the given ID.",
+        "parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "time entry id"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
+        }
+    },
   	"DeleteService": {
 		"httpMethod": "DELETE",
-      	"uri": "/services/{id}.xml",
+      	"uri": "services/{id}.xml",
       	"summary": "Deletes a service. This is only possible if there are no time entries attached to this service.",
       	"parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "service id"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"DeleteProject": {
 		"httpMethod": "DELETE",
-      	"uri": "/projects/{id}.xml",
+      	"uri": "projects/{id}.xml",
       	"summary": "Deletes a project. This is only possible if there are no time entries attached to this project.",
       	"parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "project id"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"DeleteCustomer": {
@@ -204,6 +967,19 @@
       	"uri": "customers/{id}.xml",
       	"summary": "Deletes the customer. This is only possible if there are no projects attached to this customer.",
       	"parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "customer id"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
   	},
   	"DeleteTimeEntries": {
@@ -211,7 +987,40 @@
       	"uri": "time_entries/{id}.xml",
       	"summary": "Deletes a time entry.",
       	"parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "time entry id"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
       	}
-  	}
+  	},
+    "DeleteTimeEntries": {
+    "httpMethod": "DELETE",
+        "uri": "tracker/{id}.xml",
+        "summary": "Stops the time tracker on the time entry with the given ID.",
+        "parameters": {
+          "id": {
+            "location": "uri",
+            "type": "integer",
+            "required": true,
+            "description": "time entry id"
+          },
+          "api_key": {
+            "location": "header",
+            "type": "string",
+            "required": true,
+            "description": "the api key needed for authentication",
+            "sentAs": "X-MiteApiKey"
+          }
+        }
+    }
   }
 }

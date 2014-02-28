@@ -20,7 +20,6 @@ class MiteUserController extends RemoteEntityController {
    * {@inheritdoc}
    */
   protected function loadFromService($ids, FluxEntityInterface $agent) {
-    kpr($ids);
     $output = array();
     return $output;
   }

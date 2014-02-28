@@ -63,7 +63,7 @@ class MiteService extends Service implements MiteServiceInterface {
     $form['auth']['subdomain'] = array(
       '#type' => 'textfield',
       '#title' => t('Subdomain'),
-      '#default_value' => $this->getConsumerKey(),
+      '#default_value' => $this->getSubdomain(),
       '#description' => t('The Subdomain used by this mite service.'),
     );
 

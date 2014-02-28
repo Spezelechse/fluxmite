@@ -21,6 +21,7 @@ class MiteCustomerController extends RemoteEntityController {
    */
   protected function loadFromService($ids, FluxEntityInterface $agent) {
     $output = array();
+    print_r("customer load");
     return $output;
   }
 

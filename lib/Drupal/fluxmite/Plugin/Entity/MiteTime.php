@@ -108,7 +108,7 @@ class MiteTime extends RemoteEntity implements MiteTimeInterface {
       'description' => t("Time customer-id."),
       'type' => 'integer',
     );
-    $info['cutsomer-name'] = array(
+    $info['customer-name'] = array(
       'label' => t('Customer-name'),
       'description' => t("Time Customer-name."),
       'type' => 'text',
@@ -129,5 +129,9 @@ class MiteTime extends RemoteEntity implements MiteTimeInterface {
       'type' => 'date',
     );
     return $info;
+  }
+
+  public function toString(){
+    return "[".$this->id."] ".$this->get('date-at');
   }
 }

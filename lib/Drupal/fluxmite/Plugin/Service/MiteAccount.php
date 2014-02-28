@@ -55,8 +55,7 @@ class MiteAccount extends Account implements MiteAccountInterface {
   public function client(){
     $service = $this->getService();
     return MiteClient::factory(array(
-      'base_url' => 'https://'.$service->getSubdomain().'.'.$serviceUrl,
-      'subdomain' => $service->getSubdomain(),
+      'base_url' => 'https://'.$service->getSubdomain().'.'.$this->serviceUrl,
       'access_token' => $this->getAccessToken(),
     ));
   }

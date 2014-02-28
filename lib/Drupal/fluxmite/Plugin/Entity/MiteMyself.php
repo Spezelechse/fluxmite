@@ -85,4 +85,8 @@ class MiteMyself extends RemoteEntity implements MiteMyselfInterface {
     );
     return $info;
   }
+  
+  public function toString(){
+    return "[".$this->id."] ".$this->name;
+  }
 }

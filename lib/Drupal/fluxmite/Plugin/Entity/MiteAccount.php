@@ -75,4 +75,8 @@ class MiteAccount extends RemoteEntity implements MiteAccountInterface {
  
     return $info;
   }
+  
+  public function toString(){
+    return "[".$this->id."] ".$this->name;
+  }
 }

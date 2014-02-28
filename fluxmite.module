@@ -9,18 +9,38 @@
  * Implements hook_rules_category_info().
  */
 function fluxmite_rules_category_info() {
-  $info =  array();
+	$info =  array();
   // Use the same icon as for the service plugin.
-  $info['fluxmite'] = array(
-    'label' => t('Mite'),
-  )+fluxservice_get_service_icon_info('fluxmite');
-
-  return $info;
+	$info['fluxmite'] = array(
+		'label' => t('Mite'),
+		)+fluxservice_get_service_icon_info('fluxmite');
+	$info['fluxmite_account'] = array(
+		'label' => t('Mite: Account'),
+		)+fluxservice_get_service_icon_info('fluxmite');
+	$info['fluxmite_customer'] = array(
+		'label' => t('Mite: Customer'),
+		)+fluxservice_get_service_icon_info('fluxmite');
+	$info['fluxmite_myself'] = array(
+		'label' => t('Mite: Myself'),
+		)+fluxservice_get_service_icon_info('fluxmite');
+	$info['fluxmite_project'] = array(
+		'label' => t('Mite: Project'),
+		)+fluxservice_get_service_icon_info('fluxmite');
+	$info['fluxmite_service'] = array(
+		'label' => t('Mite: Service'),
+		)+fluxservice_get_service_icon_info('fluxmite');
+	$info['fluxmite_time'] = array(
+		'label' => t('Mite: Time'),
+		)+fluxservice_get_service_icon_info('fluxmite');
+	$info['fluxmite_user'] = array(
+		'label' => t('Mite: User'),
+		)+fluxservice_get_service_icon_info('fluxmite');
+	return $info;
 }
 
 /**
  * Implements hook_fluxservice_plugin_directory().
  */
 function fluxmite_fluxservice_plugin_directory() {
-  return 'lib/Drupal/fluxmite/Plugin';
+	return 'lib/Drupal/fluxmite/Plugin';
 }
