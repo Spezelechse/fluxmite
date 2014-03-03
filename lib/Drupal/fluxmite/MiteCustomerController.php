@@ -21,7 +21,14 @@ class MiteCustomerController extends RemoteEntityController {
    */
   protected function loadFromService($ids, FluxEntityInterface $agent) {
     $output = array();
-    print_r("customer load");
+    $ids=array_values($ids);
+    $client = $agent->client();
+
+    foreach ($ids as $id) {
+      if($response=$client->getCustomer(array('id'=>(int)$id, 'api_key'=>$client->getConfig('access_token')))){
+        $output[$id]=json_decode(json_encode($response), 1);
+      }
+    }
     return $output;
   }
 
@@ -30,6 +37,11 @@ class MiteCustomerController extends RemoteEntityController {
    */
   protected function sendToService(RemoteEntityInterface $entity) {
     // @todo Throw exception.
+    if($entity->isNew()){
+      watchdog("post_customer", $entity->name);
+    }
+    else{
+      watchdog("put_customer", $entity->name);
+    }
   }
-
 }

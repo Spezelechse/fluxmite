@@ -105,8 +105,4 @@ class MiteProject extends RemoteEntity implements MiteProjectInterface {
     );
     return $info;
   }
-  
-  public function toString(){
-    return "[".$this->id."] ".$this->name;
-  }
 }

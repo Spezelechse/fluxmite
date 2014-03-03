@@ -80,8 +80,4 @@ class MiteService extends RemoteEntity implements MiteServiceInterface {
     );
     return $info;
   }
-  
-  public function toString(){
-    return "[".$this->id."] ".$this->name;
-  }
 }

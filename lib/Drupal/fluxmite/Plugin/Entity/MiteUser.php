@@ -86,8 +86,4 @@ class MiteUser extends RemoteEntity implements MiteUserInterface {
   
     return $info;
   }
-
-  public function toString(){
-    return "[".$this->id."] ".$this->name;
-  }
 }

@@ -86,7 +86,7 @@ class MiteCustomer extends RemoteEntity implements MiteCustomerInterface {
     return $info;
   }
 
-  public function toString(){
-    return "[".$this->id."] ".$this->name;
+  public function getValueOf($value=""){
+    return $this->$value;
   }
 }

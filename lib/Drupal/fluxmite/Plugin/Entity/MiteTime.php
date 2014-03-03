@@ -130,8 +130,4 @@ class MiteTime extends RemoteEntity implements MiteTimeInterface {
     );
     return $info;
   }
-
-  public function toString(){
-    return "[".$this->id."] ".$this->get('date-at');
-  }
 }
