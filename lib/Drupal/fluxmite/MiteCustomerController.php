@@ -22,6 +22,7 @@ class MiteCustomerController extends RemoteEntityController {
   protected function loadFromService($ids, FluxEntityInterface $agent) {
     $output = array();
     $ids=array_values($ids);
+    
     $client = $agent->client();
 
     foreach ($ids as $id) {
@@ -36,12 +37,31 @@ class MiteCustomerController extends RemoteEntityController {
    * {@inheritdoc}
    */
   protected function sendToService(RemoteEntityInterface $entity) {
-    // @todo Throw exception.
     if($entity->isNew()){
       watchdog("post_customer", $entity->name);
     }
     else{
       watchdog("put_customer", $entity->name);
     }
+  }
+
+  public function deleteFromService($ids, FluxEntityInterface $agent){
+
+  }
+
+  public function loadLocal(RemoteEntityInterface $entity){
+    watchdog("load_local", $entity->name);
+  }
+
+  public function createLocal(RemoteEntityInterface $entity){
+    watchdog("create_local", $entity->name);
+  }
+
+  public function updateLocal(RemoteEntityInterface $entity){
+    watchdog("update_local", $entity->name);
+  }
+
+  public function deleteLocal(RemoteEntityInterface $entity){
+    watchdog("delete_local", $entity->name);
   }
 }

@@ -25,10 +25,11 @@ class MiteCustomer extends RemoteEntity implements MiteCustomerInterface {
       'label' => t('Mite: Customer'),
       'module' => 'fluxmite',
       'service' => 'fluxmite',
+      'base table' => 'fluxmite_customer',
       'controller class' => '\Drupal\fluxmite\MiteCustomerController',
       'label callback' => 'entity_class_label',
       'entity keys' => array(
-        'id' => 'drupal_entity_id',
+        'id' => 'id',
         'remote id' => 'id',
       ),
     );

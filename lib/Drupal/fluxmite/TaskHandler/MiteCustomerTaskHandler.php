@@ -26,10 +26,12 @@ class MiteCustomerTaskHandler extends MiteTaskHandlerBase {
   	if(!empty($customers)){
 
   		$customers = fluxservice_entify_multiple($customers['customer'], 'fluxmite_customer', $account);
-      $change_type = array("new", "update", "delete");
+      $change_type = array("create", "update", "delete");
       $i=0;
+
       foreach ($customers as $customer) {
-       	rules_invoke_event($this->getEvent(), $account, $customer,$change_type[($i++)%3]); 
+       	rules_invoke_event($this->getEvent(), $account, $customer,$change_type[($i)%3]);
+        $i++; 
       }
     }
   }
