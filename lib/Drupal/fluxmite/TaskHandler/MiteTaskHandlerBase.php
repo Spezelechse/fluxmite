@@ -55,4 +55,15 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
     }
   }
 
+  public function invokeEvent($entity_type, $entities, $account, $change_type, $local_entity_ids=array()){
+    if(!empty($entities)){
+      $entities = fluxservice_entify_multiple($entities, $entity_type, $account);
+
+      $i=0;
+      foreach ($entities as $key => $entity) {
+        $local_entity_id=$local_entity_ids[$i++];
+        rules_invoke_event($this->getEvent(), $account, $entity, $change_type, $local_entity_id);
+      }
+    }
+  }
 }

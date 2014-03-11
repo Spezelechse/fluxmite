@@ -30,6 +30,11 @@ class MiteCustomerEventHandler extends MiteEventHandlerBase {
           'type' => 'text',
           'label' => t('Change type'),
         ),
+        'local_entity_id' => array(
+          'type' => 'integer',
+          'label' => t('Local entity id'),
+          'optional' => TRUE,
+        ),
       ),
     );
   }

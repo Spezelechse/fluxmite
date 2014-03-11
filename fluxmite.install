@@ -1,388 +1,41 @@
   <?php
 
   function fluxmite_schema(){
-    $schema = array();
-    $schema['fluxmite_account'] = array(
-      'description' => 'Mite Account',
+    $schema=array();
+    $schema['fluxmite'] = array(
+      'description' => 'Mapping Mite -> Local Entities',
       'fields' => array(
         'id' => array(
-          'description' => 'Account id.',
-          'type' => 'int',
+          'description' => 'Local entity id',
+          'type' => 'varchar',
+          'length' => '50',
+          'not null' => TRUE,
           ),
-        'name' => array(
-          'description' => 'Account name',
+        'type' => array(
+          'description' => 'Local entity type',
           'type' => 'varchar',
           'length' => '60',
           ),
-        'title' => array(
-          'description' => 'Account title',
+        'remote_id' => array(
+          'description' => 'Remote entity id',
           'type' => 'varchar',
           'length' => '255',
           ),
-        'currency' => array(
-          'description' => 'Account currency',
+        'remote_type' => array(
+          'description' => 'Remote entity type',
           'type' => 'varchar',
-          'length' => '20',
+          'length' => '60',
           ),
-        'created-at' => array(
+        'created_at' => array(
           'description' => 'Date which the Account was created',
-          'mysql_type' => 'date',
+          'mysql_type' => 'timestamp NULL',
           ),
-        'updated-at' => array(
+        'updated_at' => array(
           'description' => 'Date of the last update',
-          'mysql_type' => 'date',
+          'mysql_type' => 'timestamp NULL',
           ),
         ),
       'primary key' => array('id'),
       );
-    $schema['fluxmite_customer'] = array(
-      'description' => 'Mite Customer',
-      'fields' => array(
-        'id' => array(
-          'description' => 'Customer primary key',
-          'type' => 'serial',
-          'not null' => TRUE,
-          ),
-        'name' => array(
-          'description' => 'Customer name',
-          'type' => 'varchar',
-          'length' => '255',
-          'not null' => TRUE,
-          ),
-        'note' => array(
-          'description' => 'Customer note.',
-          'type' => 'text',
-          ),
-        'archived' => array(
-          'description' => 'Customer archived.',
-          'type' => 'int',
-          'size' => 'tiny',
-          ),
-        'hourly_rate' => array(
-          'description' => 'Customer hourly_rate.',
-          'type' => 'int',
-          ),
-        'active_hourly_rate' => array(
-          'description' => 'Customer active_hourly_rate.',
-          'type' => 'varchar',
-          'length' => '25',
-          ),
-        'created_at' => array(
-          'description' => 'Date which the Account was created',
-          'mysql_type' => 'date',
-          ),
-        'updated_at' => array(
-          'description' => 'Date of the last update',
-          'mysql_type' => 'date',
-          ),
-        ),
-  'primary key' => array('id'),
-  );
-  $schema['fluxmite_hourly_rate_per_service'] = array(
-    'description' => 'Mite hourly rate per service extension from customer and project',
-    'fields' => array(
-      'id' => array(
-        'description' => 'Customer or project id',
-        'type' => 'serial',
-        'not null' => TRUE,
-        ),
-      'type' => array(
-        'description' => 'Rate is part of customer or project',
-        'type' => 'varchar',
-        'length' => '10',
-        'not null' => TRUE,
-        ),
-      'value' => array(
-        'description' => 'Rate value',
-        'type' => 'int',
-        'not null' => TRUE,
-        ),
-      'service_id' => array(
-        'description' => 'Service id',
-        'type' => 'int',
-        'not null' => TRUE,
-        ),
-      ),
-    'primary key' => array('id', 'type'),
-    );
-
-  $schema['fluxmite_myself'] = array(
-    'description' => 'Mite Myself',
-    'fields' => array(
-      'id' => array(
-        'description' => 'Myself id.',
-        'type' => 'int',
-        ),
-      'name' => array(
-        'description' => 'Myself name.',
-        'type' => 'varchar',
-        'length' => '60',
-        ),
-      'email' => array(
-        'description' => 'Myself email.',
-        'type' => 'varchar',
-        'length' => '255',
-        ),
-      'note' => array(
-        'description' => 'Myself note.',
-        'type' => 'text',
-        ),
-      'archived' => array(
-        'description' => 'Myself archived.',
-        'type' => 'int',
-        'size' => 'tiny',
-        ),
-      'role' => array(
-        'description' => 'Myself role.',
-        'type' => 'varchar',
-        'length' => '60',
-        ),
-      'language' => array(
-        'description' => 'Myself language.',
-        'type' => 'varchar',
-        'length' => '20',
-        ),
-      'created-at' => array(
-        'description' => 'Date which the Account was created',
-        'mysql_type' => 'date',
-        ),
-      'updated-at' => array(
-        'description' => 'Date of the last update',
-        'mysql_type' => 'date',
-        ),
-      ),
-  'primary key' => array('id'),
-  );
-  $schema['fluxmite_project'] = array(
-    'description' => 'Mite Projects',
-    'fields' => array(
-      'id' => array(
-        'description' => 'Project id.',
-        'type' => 'int',
-        ),
-      'name' => array(
-        'description' => 'Project name.',
-        'type' => 'varchar',
-        'length' => '255',
-        ),
-      'note' => array(
-        'description' => 'Project note.',
-        'type' => 'text',
-        ),
-      'budget' => array(
-        'description' => 'Project budget.',
-        'type' => 'int',
-        ),
-      'budget-type' => array(
-        'description' => 'Project budget-type.',
-        'type' => 'varchar',
-        'length' => '255',
-        ),
-      'archived' => array(
-        'description' => 'Project archived.',
-        'type' => 'int',
-        'size' => 'tiny',
-        ),
-      'customer-id' => array(
-        'description' => 'Project customer-id.',
-        'type' => 'int',
-        ),
-      'customer-name' => array(
-        'description' => 'Project customer-name.',
-        'type' => 'varchar',
-        'length' => '60',
-        ),
-      'hourly-rate' => array(
-        'description' => 'Project hourly-rate.',
-        'type' => 'int',
-        ),
-      'active-hourly-rate' => array(
-        'description' => 'Project active-hourly-rate.',
-        'type' => 'varchar',
-        'length' => '25',
-        ),
-      'created-at' => array(
-        'description' => 'Date which the Account was created',
-        'mysql_type' => 'date',
-        ),
-      'updated-at' => array(
-        'description' => 'Date of the last update',
-        'mysql_type' => 'date',
-        ),
-      ),
-  'primary key' => array('id'),
-  );
-  $schema['fluxmite_service'] = array(
-    'description' => 'Mite Services',
-    'fields' => array(
-      'id' => array(
-        'description' => 'Service id.',
-        'type' => 'int',
-        ),
-      'name' => array(
-        'description' => 'Service name.',
-        'type' => 'varchar',
-        'length' => '60',
-        ),
-      'note' => array(
-        'description' => 'Service note.',
-        'type' => 'text',
-        ),
-      'billable' => array(
-        'description' => 'Service billable.',
-        'type' => 'int',
-        'size' => 'tiny',
-        ),
-      'hourly-rate' => array(
-        'description' => 'Service hourly-rate.',
-        'type' => 'int',
-        ),
-      'archived' => array(
-        'description' => 'Service archived.',
-        'type' => 'int',
-        'size' => 'tiny',
-        ),
-      'created-at' => array(
-        'description' => 'Date which the Account was created',
-        'mysql_type' => 'date',
-        ),
-      'updated-at' => array(
-        'description' => 'Date of the last update',
-        'mysql_type' => 'date',
-        ),
-      ),
-    'primary key' => array('id'),
-    );
-  $schema['fluxmite_time'] = array(
-    'description' => 'Mite Time',
-    'fields' => array(
-      'id' => array(
-        'description' => 'Time id.',
-        'type' => 'int',
-        ),
-      'date-at' => array(
-        'description' => 'Time date-at.',
-        'mysql_type' => 'date',
-        ),
-      'minutes' => array(
-        'description' => 'Time minutes.',
-        'type' => 'int',
-        ),
-      'revenue' => array(
-        'description' => 'Time revenue.',
-        'type' => 'float',
-        ),
-      'hourly-rate' => array(
-        'description' => 'Time hourly-rate.',
-        'type' => 'int',
-        ),
-      'billable' => array(
-        'description' => 'Time billable.',
-        'type' => 'int',
-        'size' => 'tiny',
-        ),
-      'note' => array(
-        'description' => 'Time note.',
-        'type' => 'text',
-        ),
-      'user-id' => array(
-        'description' => 'Time user-id.',
-        'type' => 'int',
-        ),
-      'user-name' => array(
-        'description' => 'Time user-name.',
-        'type' => 'varchar',
-        'length' => '60',
-        ),
-      'project-id' => array(
-        'description' => 'Time project-id.',
-        'type' => 'int',
-        ),
-      'project-name' => array(
-        'description' => 'Time project-name.',
-        'type' => 'varchar',
-        'length' => '2550',
-        ),
-      'service-id' => array(
-        'description' => 'Time service-id.',
-        'type' => 'int',
-        ),
-      'service-name' => array(
-        'description' => 'Time service-name.',
-        'type' => 'varchar',
-        'length' => '255',
-        ),
-      'customer-id' => array(
-        'description' => 'Time customer-id.',
-        'type' => 'int',
-        ),
-      'customer-name' => array(
-        'description' => 'Time Customer-name.',
-        'type' => 'varchar',
-        'length' => '60',
-        ),
-      'locked' => array(
-        'description' => 'Time locked.',
-        'type' => 'int',
-        'size' => 'tiny',
-        ),
-      'created-at' => array(
-        'description' => 'Date which the Account was created',
-        'mysql_type' => 'date',
-        ),
-      'updated-at' => array(
-        'description' => 'Date of the last update',
-        'mysql_type' => 'date',
-        ),
-      ),
-  'primary key' => array('id'),
-  );
-  $schema['fluxmite_user'] = array(
-    'description' => 'Mite Users',
-    'fields' => array(
-      'id' => array(
-        'description' => 'User id.',
-        'type' => 'int',
-        ),
-      'name' => array(
-        'description' => 'User name',
-        'type' => 'varchar',
-        'length' => '60',
-        ),
-      'email' => array(
-        'description' => 'User email',
-        'type' => 'text',
-        ),
-      'note' => array(
-        'description' => 'User note',
-        'type' => 'text',
-        ),
-      'archived' => array(
-        'description' => 'true if archived, false if not',
-        'type' => 'int',
-        'size' => 'tiny',
-        ), 
-      'role' => array(
-        'description' => 'User role',
-        'type' => 'varchar',
-        'length' => '60',
-        ),
-      'language' => array(
-        'description' => 'User language',
-        'type' => 'varchar',
-        'length' => '20',
-        ),
-      'created-at' => array(
-        'description' => 'Date which the user was created',
-        'mysql_type' => 'date',
-        ),
-      'updated-at' => array(
-        'description' => 'Date of the last update',
-        'mysql_type' => 'date',
-        ),
-      ),
-  'primary key' => array('id'),
-  );
-
   return $schema;
 }

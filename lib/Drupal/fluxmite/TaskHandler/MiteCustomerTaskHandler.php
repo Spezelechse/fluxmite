@@ -7,6 +7,7 @@
 
 namespace Drupal\fluxmite\TaskHandler;
 
+use \PDO;
 /**
  * Event dispatcher for changed mite customers.
  */
@@ -15,24 +16,40 @@ class MiteCustomerTaskHandler extends MiteTaskHandlerBase {
   /**
    * {@inheritdoc}
    */
-  public function runTask() {
-
-  	$account = $this->getAccount();
+  public function runTask() { 
+    $account = $this->getAccount();
 
   	$customers = $account->client()->getCustomers(array('api_key' => $account->getAccessToken()));
 
     $customers = json_decode(json_encode($customers),1);
 
-  	if(!empty($customers)){
+    $create=array();
+    $update=array();
+    $update_entities=array();
+    $delete=array();
 
-  		$customers = fluxservice_entify_multiple($customers['customer'], 'fluxmite_customer', $account);
-      $change_type = array("create", "update", "delete");
-      $i=0;
-
-      foreach ($customers as $customer) {
-       	rules_invoke_event($this->getEvent(), $account, $customer,$change_type[($i)%3]);
-        $i++; 
+    foreach($customers['customer'] as $customer){
+      $res=db_query("SELECT updated_at, id, type FROM {fluxmite} WHERE remote_id LIKE :id", array(':id'=>'%'.$customer['id']));
+      $res=$res->fetchAssoc();
+      
+      if($res){
+        //check for updates
+        $remote=date_create_from_format("Y-m-d?H:i:sP", $customer['updated-at']);
+        $remote=date_format($remote, "Y-m-d H:i:s");
+        
+        if($res['updated_at']<$remote){
+          array_push($update, $customer);
+          array_push($update_entities, $res['id']);
+        }
+      }
+      else{
+        array_push($create, $customer);
       }
     }
+
+    $this->invokeEvent('fluxmite_customer', $create, $account, 'create');
+    $this->invokeEvent('fluxmite_customer', $update, $account, 'update', $update_entities);
+    $this->invokeEvent('fluxmite_customer', $delete, $account, 'delete');
+     
   }
 }
