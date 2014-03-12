@@ -42,7 +42,7 @@ class MiteCustomer extends RemoteEntity implements MiteCustomerInterface {
     $info['id'] = array(
       'label' => t('Id'),
       'description' => t("Customer id."),
-      'type' => 'integer',
+      'type' => 'text',
       'setter callback' => 'entity_property_verbatim_set',
     );
     $info['name'] = array(
@@ -103,5 +103,9 @@ class MiteCustomer extends RemoteEntity implements MiteCustomerInterface {
 
   public function getFields(){
     return $this->entityInfo['schema_fields_sql']['base table'];
+  }
+
+  public function type(){
+    return $this->entityType();
   }
 }

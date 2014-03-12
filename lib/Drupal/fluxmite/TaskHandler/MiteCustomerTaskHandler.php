@@ -21,6 +21,8 @@ class MiteCustomerTaskHandler extends MiteTaskHandlerBase {
 
   	$customers = $account->client()->getCustomers(array('api_key' => $account->getAccessToken()));
 
+    dpm($customers);
+
     $customers = json_decode(json_encode($customers),1);
 
     $create=array();

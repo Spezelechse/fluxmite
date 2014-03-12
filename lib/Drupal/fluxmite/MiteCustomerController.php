@@ -22,7 +22,6 @@ class MiteCustomerController extends RemoteEntityController {
   protected function loadFromService($ids, FluxEntityInterface $agent) {
     $output = array();
     $ids=array_values($ids);
-    
     $client = $agent->client();
     
     foreach ($ids as $id) {
@@ -52,11 +51,10 @@ class MiteCustomerController extends RemoteEntityController {
       $client=$account->client();
       $response=$client->postCustomer(array('data' => $req, 'api_key'=>$client->getConfig('access_token')));
 
-
       $response = json_decode(json_encode($response),1);
-      $remoteEntities = fluxservice_entify_multiple(array($response), $entity->entityType(), $account);
+      $remoteEntity = fluxservice_entify($response, $entity->entityType(), $account);
 
-      $this->createLocal(array_shift($remoteEntities), $local_entity);
+      $this->createLocal($remoteEntity, $local_entity);
   }
   private function createRequestString(RemoteEntityInterface $entity){
     $properties=$entity->getEntityPropertyInfo("","");
@@ -65,9 +63,15 @@ class MiteCustomerController extends RemoteEntityController {
     $req="";
 
     foreach ($properties as $key => $value) {
-      $value=$entity->getValueOf($key);
+      if($key=='id'||$key=='updated-at'||$key=='created-at'){
+        continue;
+      }
 
-      if(isset($value)){
+      $value=$entity->getValueOf($key);
+      
+      //TODO: implement array datatypes
+
+      if(isset($value)&&getType($value)!='array'){
         $req.="<".$key.">".$value."</".$key.">"; 
       }
     }
@@ -77,8 +81,27 @@ class MiteCustomerController extends RemoteEntityController {
     return $req;
   }
 
-  public function deleteFromService($ids, FluxEntityInterface $agent){
+  public function updateRemote(RemoteEntityInterface $entity, $local_entity, $account){
+    $req=$this->createRequestString($entity);
 
+    $id=$entity->id;
+    $id=explode(':', $id);
+    $id=$id[2];
+
+    $client=$account->client();
+    $response=$client->putCustomer(array( 'data' => $req, 
+                                          'id' => (int)$id,
+                                          'api_key'=>$client->getConfig('access_token')));
+
+    if($response['status']==200){
+      $response=$client->getCustomer(array('id' => (int)$id,
+                                          'api_key'=>$client->getConfig('access_token')));
+
+      $response = json_decode(json_encode($response),1);
+      $remoteEntity = fluxservice_entify($response, $entity->entityType(), $account);
+
+      $this->updateLocal($remoteEntity, $local_entity); 
+    }
   }
 
   public function loadLocal(RemoteEntityInterface $entity){
@@ -98,19 +121,18 @@ class MiteCustomerController extends RemoteEntityController {
 
       $nid=db_insert('fluxmite')->fields($fields)->values($values)->execute();
 
-      watchdog("create_local", $entity->name." (".$nid.")");
+      $local_entity=entity_metadata_wrapper($local_entity->entityType(), $local_entity);
+      $local_entity->field_remote_id->set($entity->id);
+      $local_entity->save();
     }
   }
 
   public function updateLocal(RemoteEntityInterface $entity, $local_entity){
     $info=$entity->getInfo();
     if($info['name']=="fluxmite_customer"){
-
       $fields=array('updated_at'=>$this->prepareDate($entity->getValueOf('updated-at')));
 
       db_update('fluxmite')->fields($fields)->condition('remote_id', $entity->id, '=')->execute();
-
-      watchdog("update_local", $entity->name);
     }
   }
 

@@ -867,7 +867,8 @@
             "description": "the api key needed for authentication",
             "sentAs": "X-MiteApiKey"
           }
-      	}
+      	},
+        "responseClass": "GetStatusOutput"
   	},
   	"PutTimeEntry": {
 		"httpMethod": "PUT",
@@ -1020,6 +1021,17 @@
             "description": "the api key needed for authentication",
             "sentAs": "X-MiteApiKey"
           }
+        }
+    }
+  },
+  "models": {
+    "GetStatusOutput": {
+      "type": "object",
+        "properties": {
+            "status": {
+                "location": "statusCode",
+                "type": "integer"
+            }
         }
     }
   }
