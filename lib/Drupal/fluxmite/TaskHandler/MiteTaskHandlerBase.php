@@ -78,9 +78,16 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
       $entities = fluxservice_entify_multiple($entities, $entity_type, $account);
 
       $i=0;
-      foreach ($entities as $key => $entity) {
-        $local_entity_id=$local_entity_ids[$i++];
-        rules_invoke_event($this->getEvent(), $account, $entity, $change_type, $local_entity_id);
+      if($entities){
+        foreach ($entities as $key => $entity) {
+          if(!empty($local_entity_ids)){
+            $local_entity_id=$local_entity_ids[$i++];
+            rules_invoke_event($this->getEvent(), $account, $entity, $change_type, $local_entity_id);
+          }
+          else{
+            rules_invoke_event($this->getEvent(), $account, $entity, $change_type); 
+          }
+        }
       }
     }
   }
@@ -107,12 +114,18 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
     $update=array();
     $update_entities=array();
     $delete=array();
+    $delete_ids=array();
+
+    //get time_stamp of the last check
+    $last_check=db_query("SELECT MAX(touched_last) as time FROM {fluxmite}");
+    $last_check=$last_check->fetch();
+    $last_check=$last_check->time;
 
     //check create, delete, update for all mite data sets
     foreach($data_sets[$type] as $data_set){
       $res=db_query("SELECT updated_at, id, type FROM {fluxmite} WHERE remote_id LIKE :id", array(':id'=>'%'.$data_set['id']));
       $res=$res->fetchAssoc();
-      
+
       if($res){
         //check for updates
         $remote=date_create_from_format("Y-m-d?H:i:sP", $data_set['updated-at']);
@@ -122,14 +135,25 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
           array_push($update, $data_set);
           array_push($update_entities, $res['id']);
         }
+
+        db_query("UPDATE {fluxmite} SET touched_last=CURRENT_TIMESTAMP WHERE id=:id", array(':id'=>$res['id']));
       }
       else{
         array_push($create, $data_set);
       }
     }
 
+    //get deleted id's
+    $res=db_query("SELECT id FROM {fluxmite} WHERE touched_last <= '".$last_check."'");
+
+    foreach($res as $data){
+      array_push($delete_ids, $data->id);
+      array_push($delete, array());
+      db_delete('fluxmite')->condition('id',$data->id, '=')->execute();
+    }
+
     $this->invokeEvent('fluxmite_'.$type, $create, $account, 'create');
     $this->invokeEvent('fluxmite_'.$type, $update, $account, 'update', $update_entities);
-    $this->invokeEvent('fluxmite_'.$type, $delete, $account, 'delete');     
+    $this->invokeEvent('fluxmite_'.$type, $delete, $account, 'delete', $delete_ids);     
   }
 }

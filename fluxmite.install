@@ -26,6 +26,10 @@
           'type' => 'varchar',
           'length' => '60',
           ),
+        'touched_last' => array(
+          'description' => 'Date of the last time the data set was updated',
+          'mysql_type' => 'timestamp ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
+          ),
         'created_at' => array(
           'description' => 'Date which the Account was created',
           'mysql_type' => 'timestamp NULL',

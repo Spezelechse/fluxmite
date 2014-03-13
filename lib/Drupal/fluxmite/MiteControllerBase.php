@@ -20,6 +20,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
  * Creates a new database entry
  */
   public function createLocal(RemoteEntityInterface $entity, $local_entity){
+    //print_r($local_entity);
     $fields=array('id', 'type', 'remote_id', 'remote_type', 'created_at', 'updated_at');
     $values=array($local_entity->id, 
                   $local_entity->entityType(), 
@@ -92,6 +93,27 @@ abstract class MiteControllerBase extends RemoteEntityController {
     $req="<".$type[1].">".$req."</".$type[1].">";
 
     return $req;
+  }
+
+  public function deleteRemote($local, $account, $remote_type, $remote_id){
+    $remote_id=explode(":", $remote_id);
+    $remote_id=$remote_id[2];
+
+    $type=explode("_",$remote_type);
+    $type=$type[1];
+
+    $client=$account->client();
+    $operation='delete'.ucfirst($type);
+    $response=$client->$operation(array(  'id' => (int)$remote_id,
+                                          'api_key'=>$client->getConfig('access_token')));
+
+    if($response['status']==200){
+      $num=db_delete('fluxmite')->condition('id', $local->id)->execute();
+
+      if($num<=0){
+        //TODO: throw exception
+      }
+    }
   }
 
   /**

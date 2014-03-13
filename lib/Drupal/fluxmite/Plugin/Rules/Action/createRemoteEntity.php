@@ -8,7 +8,6 @@
 namespace Drupal\fluxmite\Plugin\Rules\Action;
 
 use Drupal\fluxmite\Plugin\Service\MiteAccountInterface;
-use Drupal\fluxmite\Plugin\Entity\MiteCustomer;
 use Drupal\fluxmite\Rules\RulesPluginHandlerBase;
 
 /**
@@ -26,15 +25,16 @@ class createRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
       'label' => t('Create remote entity'),
       'parameter' => array(
         'remote_entity' => array(
-          'type' => '*',
+          'type' => 'entity',
           'label' => t('Mite: Entity'),
           'wrapped' => FALSE,
           'required' => TRUE,
         ),
         'account' => static::getServiceParameterInfo(),
         'local_entity' => array(
-          'type' => '*',
+          'type' => 'entity',
           'label' => t('Local: Entity'),
+          'wrapped' => FALSE,
           'required' => TRUE,
         ),
       ),

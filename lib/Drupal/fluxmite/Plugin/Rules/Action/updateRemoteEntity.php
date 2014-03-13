@@ -26,15 +26,16 @@ class updateRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
       'label' => t('Update remote entity'),
       'parameter' => array(
         'remote_entity' => array(
-          'type' => '*',
+          'type' => 'entity',
           'label' => t('Mite: Entity'),
           'wrapped' => FALSE,
           'required' => TRUE,
         ),
         'account' => static::getServiceParameterInfo(),
         'local_entity' => array(
-          'type' => '*',
+          'type' => 'entity',
           'label' => t('Local: Entity'),
+          'wrapped' => FALSE,
           'required' => TRUE,
         ),
       ),

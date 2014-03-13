@@ -981,7 +981,8 @@
             "description": "the api key needed for authentication",
             "sentAs": "X-MiteApiKey"
           }
-      	}
+      	},
+        "responseClass": "GetStatusOutput"
   	},
   	"DeleteTimeEntries": {
 		"httpMethod": "DELETE",

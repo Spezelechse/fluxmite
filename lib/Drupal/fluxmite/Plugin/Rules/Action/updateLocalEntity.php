@@ -25,15 +25,16 @@ class updateLocalEntity extends RulesPluginHandlerBase implements \RulesActionHa
       'label' => t('Update local entity'),
       'parameter' => array(
         'remote_entity' => array(
-          'type' => '*',
+          'type' => 'entity',
           'label' => t('Mite: Entity'),
           'wrapped' => FALSE,
           'required' => TRUE,
         ),
         'account' => static::getServiceParameterInfo(),
         'local_entity' => array(
-          'type' => '*',
+          'type' => 'entity',
           'label' => t('Local: Entity'),
+          'wrapped' => FALSE,
           'required' => FALSE,
         ),
       ),
