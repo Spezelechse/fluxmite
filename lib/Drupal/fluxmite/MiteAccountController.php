@@ -8,13 +8,12 @@
 namespace Drupal\fluxmite;
 
 use Drupal\fluxservice\Entity\FluxEntityInterface;
-use Drupal\fluxservice\RemoteEntityController;
 use Drupal\fluxservice\Entity\RemoteEntityInterface;
 
 /**
  * Class RemoteEntityController
  */
-class MiteAccountController extends RemoteEntityController {
+class MiteAccountController extends MiteControllerBase {
 
   /**
    * {@inheritdoc}

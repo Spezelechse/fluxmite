@@ -2,19 +2,18 @@
 
 /**
  * @file
- * Contains createRemoteEntity.
+ * Contains createLocalEntity.
  */
 
 namespace Drupal\fluxmite\Plugin\Rules\Action;
 
 use Drupal\fluxmite\Plugin\Service\MiteAccountInterface;
-use Drupal\fluxmite\Plugin\Entity\MiteCustomer;
 use Drupal\fluxmite\Rules\RulesPluginHandlerBase;
 
 /**
- * create remote entities.
+ * Create local entiy.
  */
-class createRemoteEntity extends RulesPluginHandlerBase implements \RulesActionHandlerInterface {
+class createLocalEntity extends RulesPluginHandlerBase implements \RulesActionHandlerInterface {
 
   /**
    * Defines the action.
@@ -22,8 +21,8 @@ class createRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
   public static function getInfo() {
 
     return static::getInfoDefaults() + array(
-      'name' => 'fluxmite_create_remote_entity',
-      'label' => t('Create remote entity'),
+      'name' => 'fluxmite_create_local_entity',
+      'label' => t('Create local entity'),
       'parameter' => array(
         'remote_entity' => array(
           'type' => '*',
@@ -35,7 +34,7 @@ class createRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
         'local_entity' => array(
           'type' => '*',
           'label' => t('Local: Entity'),
-          'required' => TRUE,
+          'required' => FALSE,
         ),
       ),
     );
@@ -47,6 +46,6 @@ class createRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
   public function execute($remote_entity, MiteAccountInterface $account, $local_entity) {
     $controller = entity_get_controller($remote_entity->entityType());
     
-    $controller->createRemote($remote_entity, $local_entity, $account);
+    $controller->createLocal($remote_entity, $local_entity);
   }
 }

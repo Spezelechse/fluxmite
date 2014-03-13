@@ -33,8 +33,6 @@ class fetchRemoteEntityById extends RulesPluginHandlerBase implements \RulesActi
         'remote_entity_type' => array(
           'type' => 'text',
           'options list' => 'rules_entity_action_type_options',
-           // Add the entity-type for the options list callback.
-          //'options list entity type' => $type,
           'label' => t('Remote entity type'),
           'restriction' => 'input',
           'required' => TRUE,

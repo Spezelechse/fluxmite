@@ -16,7 +16,6 @@ class MiteServiceTaskHandler extends MiteTaskHandlerBase {
    * {@inheritdoc}
    */
   public function runTask() {
-
-  	$account = $this->getAccount();
-
+	$this->checkAndInvoke();
+  }
 }

@@ -7,10 +7,8 @@
 
 namespace Drupal\fluxmite;
 
-use Drupal\fluxmite\Guzzle\MiteAuthenticationPlugin;
 use Drupal\fluxservice\ServiceClientInterface;
 use Guzzle\Common\Collection;
-use Guzzle\Plugin\Oauth\OauthPlugin;
 use Guzzle\Service\Client;
 use Guzzle\Service\Description\ServiceDescription;
 

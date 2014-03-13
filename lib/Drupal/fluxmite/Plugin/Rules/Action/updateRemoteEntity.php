@@ -23,7 +23,7 @@ class updateRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
 
     return static::getInfoDefaults() + array(
       'name' => 'fluxmite_update_remote_entity',
-      'label' => t('updateRemoteEntity'),
+      'label' => t('Update remote entity'),
       'parameter' => array(
         'remote_entity' => array(
           'type' => '*',
@@ -45,11 +45,8 @@ class updateRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
    * Executes the action.
    */
   public function execute($remote_entity, MiteAccountInterface $account, $local_entity) {
-    $info=$remote_entity->getInfo();
-    $controller = entity_get_controller($info['name']);
+    $controller = entity_get_controller($remote_entity->entityType());
     
     $controller->updateRemote($remote_entity, $local_entity, $account);
-
-    watchdog("log_customer", $remote_entity->getValueOf('name')." @".$account->label." (update)");
   }
 }
