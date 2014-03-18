@@ -76,5 +76,4 @@ abstract class MiteEventHandlerBase extends CronEventHandlerBase {
   public function getEventNameSuffix() {
     return drupal_hash_base64(serialize($this->getSettings()));
   }
-
 }

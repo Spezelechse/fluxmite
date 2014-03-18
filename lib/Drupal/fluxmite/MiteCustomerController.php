@@ -25,7 +25,11 @@ class MiteCustomerController extends MiteControllerBase {
     
     foreach ($ids as $id) {
       if($response=$client->getCustomer(array('id'=>(int)$id, 'api_key'=>$client->getConfig('access_token')))){
-        $output[$id]=json_decode(json_encode($response), 1);
+
+        $search=array_keys($this->miteSpecialFields());
+        $replace=array_values($this->miteSpecialFields());
+
+        $output[$id]=json_decode(str_replace($search,$replace,json_encode($response)), 1);
       }
     }
 

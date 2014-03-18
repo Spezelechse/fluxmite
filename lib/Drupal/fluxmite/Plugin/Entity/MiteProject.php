@@ -12,7 +12,7 @@ use Drupal\fluxservice\Entity\RemoteEntity;
 /**
  * Entity class for Mite Projects.
  */
-class MiteProject extends RemoteEntity implements MiteProjectInterface {
+class MiteProject extends MiteEntityBase implements MiteProjectInterface {
 
   /**
    * Defines the entity type.
@@ -22,13 +22,13 @@ class MiteProject extends RemoteEntity implements MiteProjectInterface {
   public static function getInfo() {
     return array(
       'name' => 'fluxmite_project',
-      'label' => t('Mite: Project'),
+      'label' => t('Mite (remote): Project'),
       'module' => 'fluxmite',
       'service' => 'fluxmite',
       'controller class' => '\Drupal\fluxmite\MiteProjectController',
       'label callback' => 'entity_class_label',
       'entity keys' => array(
-        'id' => 'drupal_entity_id',
+        'id' => 'id',
         'remote id' => 'id',
       ),
     );
@@ -42,66 +42,79 @@ class MiteProject extends RemoteEntity implements MiteProjectInterface {
       'label' => t('Id'),
       'description' => t("Project id."),
       'type' => 'integer',
+      'setter callback' => 'entity_property_verbatim_set',
     );
     $info['name'] = array(
       'label' => t('Name'),
       'description' => t("Project name."),
       'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
     );
     $info['note'] = array(
       'label' => t('Note'),
       'description' => t("Project note."),
       'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
     );
     $info['budget'] = array(
       'label' => t('Budget'),
       'description' => t("Project budget."),
       'type' => 'integer',
+      'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['budget-type'] = array(
+    $info['budget_type'] = array(
       'label' => t('Budget-type'),
       'description' => t("Project budget-type."),
       'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
     );
     $info['archived'] = array(
       'label' => t('Archived'),
       'description' => t("Project archived."),
       'type' => 'boolean',
+      'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['customer-id'] = array(
+    $info['customer_id'] = array(
       'label' => t('Customer-id'),
       'description' => t("Project customer-id."),
       'type' => 'integer',
+      'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['customer-name'] = array(
+    $info['customer_name'] = array(
       'label' => t('Customer-name'),
       'description' => t("Project customer-name."),
       'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['hourly-rate'] = array(
+    $info['hourly_rate'] = array(
       'label' => t('Hourly-rate'),
       'description' => t("Project hourly-rate."),
       'type' => 'integer',
+      'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['active-hourly-rate'] = array(
+    $info['active_hourly_rate'] = array(
       'label' => t('Active-hourly-rate'),
       'description' => t("Project active-hourly-rate."),
       'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['hourly-rates-per-service'] = array(
+    $info['hourly_rates_per_service'] = array(
       'label' => t('Hourly-rates-per-service'),
       'description' => t("Project hourly-rates-per-service."),
       'type' => 'array',
+      'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['created-at'] = array(
+    $info['created_at'] = array(
       'label' => t('Created-at'),
       'description' => t("Date which the Account was created"),
       'type' => 'date',
+      'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['updated-at'] = array(
+    $info['updated_at'] = array(
       'label' => t('Updated-at'),
       'description' => t("Date of the last update"),
       'type' => 'date',
+      'setter callback' => 'entity_property_verbatim_set',
     );
     return $info;
   }

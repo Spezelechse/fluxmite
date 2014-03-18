@@ -17,6 +17,8 @@ class MiteCustomerTaskHandler extends MiteTaskHandlerBase {
    * {@inheritdoc}
    */
   public function runTask() { 
+  	print_r("customer");
+  	echo "<br>";
     $this->checkAndInvoke();
   }
 }

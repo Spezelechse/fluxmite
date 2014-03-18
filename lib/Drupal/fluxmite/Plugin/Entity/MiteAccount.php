@@ -12,7 +12,7 @@ use Drupal\fluxservice\Entity\RemoteEntity;
 /**
  * Entity class for Mite Accounts.
  */
-class MiteAccount extends RemoteEntity implements MiteAccountInterface {
+class MiteAccount extends MiteEntityBase implements MiteAccountInterface {
 
   /**
    * Defines the entity type.
@@ -22,13 +22,13 @@ class MiteAccount extends RemoteEntity implements MiteAccountInterface {
   public static function getInfo() {
     return array(
       'name' => 'fluxmite_account',
-      'label' => t('Mite: Account'),
+      'label' => t('Mite (remote): Account'),
       'module' => 'fluxmite',
       'service' => 'fluxmite',
       'controller class' => '\Drupal\fluxmite\MiteAccountController',
       'label callback' => 'entity_class_label',
       'entity keys' => array(
-        'id' => 'drupal_entity_id',
+        'id' => 'id',
         'remote id' => 'id',
       ),
     );
@@ -42,35 +42,41 @@ class MiteAccount extends RemoteEntity implements MiteAccountInterface {
       'label' => t('Id'),
       'description' => t("Account id."),
       'type' => 'integer',
+      'setter callback' => 'entity_property_verbatim_set',
     );
 
     $info['name'] = array(
       'label' => t('Name'),
       'description' => t("Account name"),
       'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
     );
 
     $info['title'] = array(
       'label' => t('Title'),
       'description' => t("Account title"),
       'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
     );
 
     $info['currency'] = array(
       'label' => t('Currency'),
       'description' => t("Account currency"),
       'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
     );
 
-    $info['created-at'] = array(
+    $info['created_at'] = array(
       'label' => t('Created-at'),
       'description' => t("Date which the Account was created"),
       'type' => 'date',
+      'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['updated-at'] = array(
+    $info['updated_at'] = array(
       'label' => t('Updated-at'),
       'description' => t("Date of the last update"),
       'type' => 'date',
+      'setter callback' => 'entity_property_verbatim_set',
     );
  
     return $info;

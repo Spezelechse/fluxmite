@@ -16,6 +16,11 @@
           'type' => 'varchar',
           'length' => '60',
           ),
+        'mite_id' => array(
+          'description' => 'Mite id',
+          'type' => 'varchar',
+          'length' => '50',
+          ),
         'remote_id' => array(
           'description' => 'Remote entity id',
           'type' => 'varchar',
@@ -28,18 +33,42 @@
           ),
         'touched_last' => array(
           'description' => 'Date of the last time the data set was updated',
-          'mysql_type' => 'timestamp ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
+          'type' => 'int',
+          'not null' => TRUE,
           ),
         'created_at' => array(
           'description' => 'Date which the Account was created',
-          'mysql_type' => 'timestamp NULL',
+          'type' => 'int',
           ),
         'updated_at' => array(
           'description' => 'Date of the last update',
-          'mysql_type' => 'timestamp NULL',
+          'type' => 'int',
           ),
         ),
-      'primary key' => array('id'),
+      'primary key' => array('id','remote_id'),
+      );
+    $schema['fluxmite_queue'] = array(
+      'description' => 'Mite queue: if mite is unavailable the operations are stored here for later execution',
+      'fields' => array(
+        'id' => array(
+          'description' => 'Id of the entity that changed',
+          'type' => 'varchar',
+          'length' => '50',
+          'not null' => TRUE,
+          ),
+        'change_type' => array(
+          'description' => 'Type of the change (create, delete, update)',
+          'type' => 'varchar',
+          'length' => '6',
+          'not null' => TRUE,
+          ),
+        'time' => array(
+          'description' => 'Timestamp when the change happend',
+          'type' => 'int',
+          'not null' => TRUE,
+          ),
+        ),
+        'primary key' => array('id', 'change_type'),
       );
   return $schema;
 }

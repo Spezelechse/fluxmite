@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains MiteTimeEventHandler.
+ * Contains MiteTimeEntryEventHandler.
  */
 
 namespace Drupal\fluxmite\Plugin\Rules\Event;
@@ -10,20 +10,20 @@ namespace Drupal\fluxmite\Plugin\Rules\Event;
 /**
  * Event handler for time entities.
  */
-class MiteTimeEventHandler extends MiteEventHandlerBase {
+class MiteTimeEntryEventHandler extends MiteEventHandlerBase {
 
   /**
    * Defines the event.
    */
   public static function getInfo() {
     return static::getInfoDefaults() + array(
-      'name' => 'fluxmite_time_posted',
+      'name' => 'fluxmite_time_entry_event',
       'label' => t('Something happend to a time entry'),
       'variables' => array(
         'account' => static::getServiceVariableInfo(),
         'time' => array(
-          'type' => 'fluxmite_time',
-          'label' => t('Mite: Time'),
+          'type' => 'fluxmite_time_entry',
+          'label' => t('Mite: Time entry'),
           'description' => t('The time entry that triggered the event.'),
         ),
         'change_type' => array(
@@ -43,7 +43,7 @@ class MiteTimeEventHandler extends MiteEventHandlerBase {
    * {@inheritdoc}
    */
   public function getTaskHandler() {
-    return 'Drupal\fluxmite\TaskHandler\MiteTimeTaskHandler';
+    return 'Drupal\fluxmite\TaskHandler\MiteTimeEntryTaskHandler';
   }
 
   /**

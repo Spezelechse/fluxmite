@@ -149,7 +149,7 @@
           }
         }
     },
-  	"GetTimeEntries": {
+  	"GetTime_entrys": {
   		"httpMethod": "GET",
       	"uri": "time_entries.xml",
       	"summary": "Returns all time entries for all users, sorted in reverse chronological order (date_at). A user of role time tracker can only access his own time entries.",
@@ -223,7 +223,7 @@
           }
       	}
   	},
-    "GetTimeEntriesGrouped": {
+    "GetTime_entrysGrouped": {
       "httpMethod": "GET",
         "uri": "time_entries.xml",
         "summary": "Returns all time entries for all users grouped, sorted in reverse chronological order (date_at). A user of role time tracker can only access his own time entries.",
@@ -303,7 +303,7 @@
           }
         }
     },
-    "GetTimeEntriesFromBookmark": {
+    "GetTime_entrysFromBookmark": {
       "httpMethod": "GET",
         "uri": "time_entries/bookmarks/{id}/follow.xml",
         "summary": "Returns all time entries for all users filtered by bookmark, sorted in reverse chronological order (date_at). A user of role time tracker can only access his own time entries.",
@@ -448,7 +448,7 @@
           }
       	}
   	},
-  	"GetTodaysTimeEntries": {
+  	"GetTodaysTime_entry": {
   		"httpMethod": "GET",
       	"uri": "daily.xml",
       	"summary": "Lists today's time entries for the user in question.",
@@ -462,7 +462,7 @@
           }
       	}
   	},
-  	"GetDailyTimeEntries": {
+  	"GetDailyTime_entrys": {
   		"httpMethod": "GET",
       	"uri": "daily/{day}.xml",
       	"summary": "Lists all time entries on the given date for the user in question.",
@@ -582,7 +582,7 @@
           }
         }
     },
-  	"GetTimeEntry": {
+  	"GetTime_entry": {
   		"httpMethod": "GET",
       	"uri": "time_entries/{id}.xml",
       	"summary": "Returns a single time entry",
@@ -725,7 +725,7 @@
           }
       	}
   	},
-  	"PostTimeEntry":{
+  	"PostTime_entry":{
   		"httpMethod": "POST",
       	"uri": "time_entries.xml",
       	"summary": "Creates a new time entry. All parameters are optional.",
@@ -789,7 +789,8 @@
             "description": "the api key needed for authentication",
             "sentAs": "X-MiteApiKey"
           }
-      	}
+      	},
+        "responseClass": "GetStatusOutput"
   	},
   	"PutProject": {
 		"httpMethod": "PUT",
@@ -828,7 +829,8 @@
             "description": "the api key needed for authentication",
             "sentAs": "X-MiteApiKey"
           }
-      	}
+      	},
+        "responseClass": "GetStatusOutput"
   	},
   	"PutCustomer": {
 		"httpMethod": "PUT",
@@ -870,7 +872,7 @@
       	},
         "responseClass": "GetStatusOutput"
   	},
-  	"PutTimeEntry": {
+  	"PutTime_entry": {
 		"httpMethod": "PUT",
       	"uri": "time_entries/{id}.xml",
       	"summary": "Updates the time entry with the given parameters. The time entry can belong to any user of the account, as long as the current user is a administrator or the account owner. You can specify the same parameters you use when creating a time entry.",
@@ -901,7 +903,8 @@
             "description": "the api key needed for authentication",
             "sentAs": "X-MiteApiKey"
           }
-      	}
+      	},
+        "responseClass": "GetStatusOutput"
   	},
     "StartTracker": {
     "httpMethod": "PUT",
@@ -921,7 +924,8 @@
             "description": "the api key needed for authentication",
             "sentAs": "X-MiteApiKey"
           }
-        }
+        },
+        "responseClass": "GetStatusOutput"
     },
   	"DeleteService": {
 		"httpMethod": "DELETE",
@@ -941,7 +945,8 @@
             "description": "the api key needed for authentication",
             "sentAs": "X-MiteApiKey"
           }
-      	}
+      	},
+        "responseClass": "GetStatusOutput"
   	},
   	"DeleteProject": {
 		"httpMethod": "DELETE",
@@ -961,7 +966,8 @@
             "description": "the api key needed for authentication",
             "sentAs": "X-MiteApiKey"
           }
-      	}
+      	},
+        "responseClass": "GetStatusOutput"
   	},
   	"DeleteCustomer": {
 		"httpMethod": "DELETE",
@@ -984,7 +990,7 @@
       	},
         "responseClass": "GetStatusOutput"
   	},
-  	"DeleteTimeEntries": {
+  	"DeleteTime_entry": {
 		"httpMethod": "DELETE",
       	"uri": "time_entries/{id}.xml",
       	"summary": "Deletes a time entry.",
@@ -1002,9 +1008,10 @@
             "description": "the api key needed for authentication",
             "sentAs": "X-MiteApiKey"
           }
-      	}
+      	},
+        "responseClass": "GetStatusOutput"
   	},
-    "DeleteTimeEntries": {
+    "StopTracker": {
     "httpMethod": "DELETE",
         "uri": "tracker/{id}.xml",
         "summary": "Stops the time tracker on the time entry with the given ID.",
@@ -1022,7 +1029,8 @@
             "description": "the api key needed for authentication",
             "sentAs": "X-MiteApiKey"
           }
-        }
+        },
+        "responseClass": "GetStatusOutput"
     }
   },
   "models": {

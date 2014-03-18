@@ -12,7 +12,7 @@ use Drupal\fluxservice\Entity\RemoteEntity;
 /**
  * Entity class for Mite Myselfs.
  */
-class MiteMyself extends RemoteEntity implements MiteMyselfInterface {
+class MiteMyself extends MiteEntityBase implements MiteMyselfInterface {
 
   /**
    * Defines the entity type.
@@ -22,13 +22,13 @@ class MiteMyself extends RemoteEntity implements MiteMyselfInterface {
   public static function getInfo() {
     return array(
       'name' => 'fluxmite_myself',
-      'label' => t('Mite: Myself'),
+      'label' => t('Mite (remote): Myself'),
       'module' => 'fluxmite',
       'service' => 'fluxmite',
       'controller class' => '\Drupal\fluxmite\MiteMyselfController',
       'label callback' => 'entity_class_label',
       'entity keys' => array(
-        'id' => 'drupal_entity_id',
+        'id' => 'id',
         'remote id' => 'id',
       ),
     );
@@ -42,46 +42,55 @@ class MiteMyself extends RemoteEntity implements MiteMyselfInterface {
       'label' => t('Id'),
       'description' => t("Myself id."),
       'type' => 'integer',
+      'setter callback' => 'entity_property_verbatim_set',
     );
     $info['name'] = array(
       'label' => t('Name'),
       'description' => t("Myself name."),
       'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
     );
     $info['email'] = array(
       'label' => t('Email'),
       'description' => t("Myself email."),
       'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
     );
     $info['note'] = array(
       'label' => t('Note'),
       'description' => t("Myself note."),
       'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
     );
     $info['archived'] = array(
       'label' => t('Archived'),
       'description' => t("Myself archived."),
       'type' => 'boolean',
+      'setter callback' => 'entity_property_verbatim_set',
     );
     $info['role'] = array(
       'label' => t('Role'),
       'description' => t("Myself role."),
       'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
     );
     $info['language'] = array(
       'label' => t('Language'),
       'description' => t("Myself language."),
       'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['created-at'] = array(
+    $info['created_at'] = array(
       'label' => t('Created-at'),
       'description' => t("Date which the Account was created"),
       'type' => 'date',
+      'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['updated-at'] = array(
+    $info['updated_at'] = array(
       'label' => t('Updated-at'),
       'description' => t("Date of the last update"),
       'type' => 'date',
+      'setter callback' => 'entity_property_verbatim_set',
     );
     return $info;
   }

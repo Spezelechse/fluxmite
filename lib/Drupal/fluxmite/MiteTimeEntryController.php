@@ -2,18 +2,19 @@
 
 /**
  * @file
- * Contains MiteProjectController.
+ * Contains MiteTimeEntryController.
  */
 
 namespace Drupal\fluxmite;
 
 use Drupal\fluxservice\Entity\FluxEntityInterface;
 use Drupal\fluxservice\Entity\RemoteEntityInterface;
+use Drupal\fluxmite\Plugin\Rules\Event\MiteTimeEntryEventHandler;
 
 /**
  * Class RemoteEntityController
  */
-class MiteProjectController extends MiteControllerBase {
+class MiteTimeEntryController extends MiteControllerBase {
 
   /**
    * {@inheritdoc}
@@ -24,7 +25,7 @@ class MiteProjectController extends MiteControllerBase {
     $client = $agent->client();
     
     foreach ($ids as $id) {
-      if($response=$client->getProject(array('id'=>(int)$id, 'api_key'=>$client->getConfig('access_token')))){
+      if($response=$client->getTime_entry(array('id'=>(int)$id, 'api_key'=>$client->getConfig('access_token')))){
 
         $search=array_keys($this->miteSpecialFields());
         $replace=array_values($this->miteSpecialFields());
@@ -42,5 +43,4 @@ class MiteProjectController extends MiteControllerBase {
   protected function sendToService(RemoteEntityInterface $entity) {
     // @todo Throw exception.
   }
-
 }

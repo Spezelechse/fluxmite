@@ -12,6 +12,6 @@ use Drupal\fluxservice\Entity\RemoteEntityInterface;
 /**
  * Interfaces for Mite service objects.
  */
-interface MiteServiceInterface extends RemoteEntityInterface {
+interface MiteServiceInterface extends MiteEntityBaseInterface {
 
 }

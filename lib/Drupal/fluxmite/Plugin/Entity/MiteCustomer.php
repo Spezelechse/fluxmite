@@ -12,7 +12,7 @@ use Drupal\fluxservice\Entity\RemoteEntity;
 /**
  * Entity class for Mite Customers.
  */
-class MiteCustomer extends RemoteEntity implements MiteCustomerInterface {
+class MiteCustomer extends MiteEntityBase implements MiteCustomerInterface {
 
   /**
    * Defines the entity type.
@@ -22,10 +22,9 @@ class MiteCustomer extends RemoteEntity implements MiteCustomerInterface {
   public static function getInfo() {
     return array(
       'name' => 'fluxmite_customer',
-      'label' => t('Mite: Customer'),
+      'label' => t('Mite (remote): Customer'),
       'module' => 'fluxmite',
       'service' => 'fluxmite',
-      'base table' => 'fluxmite',
       'controller class' => '\Drupal\fluxmite\MiteCustomerController',
       'label callback' => 'entity_class_label',
       'entity keys' => array(
@@ -64,48 +63,36 @@ class MiteCustomer extends RemoteEntity implements MiteCustomerInterface {
       'type' => 'boolean',
       'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['hourly-rate'] = array(
+    $info['hourly_rate'] = array(
       'label' => t('Hourly-rate'),
       'description' => t("Customer hourly-rate."),
       'type' => 'integer',
       'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['active-hourly-rate'] = array(
+    $info['active_hourly_rate'] = array(
       'label' => t('Active-hourly-rate'),
       'description' => t("Customer active-hourly-rate."),
       'type' => 'text',
       'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['hourly-rates-per-service'] = array(
+    $info['hourly_rates_per_service'] = array(
       'label' => t('Hourly-rates-per-service'),
       'description' => t("Customer hourly-rates-per-service."),
       'type' => 'array',
       'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['created-at'] = array(
+    $info['created_at'] = array(
       'label' => t('Created-at'),
       'description' => t("Date which the Account was created"),
       'type' => 'date',
       'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['updated-at'] = array(
+    $info['updated_at'] = array(
       'label' => t('Updated-at'),
       'description' => t("Date of the last update"),
       'type' => 'date',
       'setter callback' => 'entity_property_verbatim_set',
     );
     return $info;
-  }
-
-  public function getValueOf($value=""){
-    return $this->{$value};
-  }
-
-  public function getFields(){
-    return $this->entityInfo['schema_fields_sql']['base table'];
-  }
-
-  public function type(){
-    return $this->entityType();
   }
 }
