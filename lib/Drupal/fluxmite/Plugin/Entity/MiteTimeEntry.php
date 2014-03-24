@@ -13,7 +13,11 @@ use Drupal\fluxservice\Entity\RemoteEntity;
  * Entity class for Mite Time entries.
  */
 class MiteTimeEntry extends MiteEntityBase implements MiteTimeEntryInterface {
-
+   public function __construct(array $values = array(), $entity_type = NULL) {
+    parent::__construct($values, $entity_type);
+    
+    $this->date_at=strtotime($this->date_at);
+  }
   /**
    * Defines the entity type.
    *
@@ -48,12 +52,6 @@ class MiteTimeEntry extends MiteEntityBase implements MiteTimeEntryInterface {
       'label' => t('Date-at'),
       'description' => t("Time date-at."),
       'type' => 'date',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
-    $info['date_at_timestamp'] = array(
-      'label' => t('Date-at timestamp'),
-      'description' => t("Time date-at as timestamp."),
-      'type' => 'integer',
       'setter callback' => 'entity_property_verbatim_set',
     );
     $info['minutes'] = array(

@@ -5,6 +5,7 @@ core = 7.x
 php = 5.3
 dependencies[] = fluxservice
 dependencies[] = rules_scheduler
+dependencies[] = date
 
 ; Information added by drupal.org packaging script on 2013-09-20
 version = "7.x-1.0-beta1+17-dev"

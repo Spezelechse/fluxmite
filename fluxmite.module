@@ -44,3 +44,15 @@ function fluxmite_rules_category_info() {
 function fluxmite_fluxservice_plugin_directory() {
 	return 'lib/Drupal/fluxmite/Plugin';
 }
+
+
+  /**
+   * 
+   */
+function task_type_get_options(){
+	return array('post'=>'create', 'put'=>'update', 'delete'=>'delete');
+}
+
+function task_priority_get_options(){
+	return array(0,1,2,3,5);
+}

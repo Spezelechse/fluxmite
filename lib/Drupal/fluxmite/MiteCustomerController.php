@@ -9,6 +9,7 @@ namespace Drupal\fluxmite;
 
 use Drupal\fluxservice\Entity\FluxEntityInterface;
 use Drupal\fluxservice\Entity\RemoteEntityInterface;
+use Guzzle\Http\Exception\BadResponseException;
 
 /**
  * Class RemoteEntityController
@@ -23,14 +24,23 @@ class MiteCustomerController extends MiteControllerBase {
     $ids=array_values($ids);
     $client = $agent->client();
     
-    foreach ($ids as $id) {
-      if($response=$client->getCustomer(array('id'=>(int)$id, 'api_key'=>$client->getConfig('access_token')))){
+    try{
+	    foreach ($ids as $id) {
+	      if($response=$client->getCustomer(array('id'=>(int)$id, 'api_key'=>$client->getConfig('access_token')))){
 
-        $search=array_keys($this->miteSpecialFields());
-        $replace=array_values($this->miteSpecialFields());
+	        $search=array_keys($this->miteSpecialFields());
+	        $replace=array_values($this->miteSpecialFields());
 
-        $output[$id]=json_decode(str_replace($search,$replace,json_encode($response)), 1);
-      }
+	        $output[$id]=json_decode(str_replace($search,$replace,json_encode($response)), 1);
+	      }
+	  	}
+  	}
+  	catch(BadResponseException $e){
+       if($e->getResponse()->getStatusCode()==404){
+         $this->handle404('[404] Host "'.$client->getBaseUrl().'" not found (getCustomer)');
+       }
+       else{
+       }
     }
 
     return $output;
@@ -40,10 +50,6 @@ class MiteCustomerController extends MiteControllerBase {
    * {@inheritdoc}
    */
   protected function sendToService(RemoteEntityInterface $entity) {
-
-    if($entity->isNew()){
-    }
-    else{
-    }
+    // @todo Throw exception.
   }
 }

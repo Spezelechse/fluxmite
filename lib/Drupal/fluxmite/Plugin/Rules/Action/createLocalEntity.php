@@ -45,8 +45,11 @@ class createLocalEntity extends RulesPluginHandlerBase implements \RulesActionHa
    * Executes the action.
    */
   public function execute($remote_entity, MiteAccountInterface $account, $local_entity) {
+    dpm("create local");
+    print_r("create local<br>");
+
     $controller = entity_get_controller($remote_entity->entityType());
     
-    $controller->createLocal($remote_entity, $local_entity);
+    $controller->createLocal($remote_entity, $local_entity->id, $local_entity->entityType());
   }
 }

@@ -19,6 +19,7 @@ class MiteCustomerTaskHandler extends MiteTaskHandlerBase {
   public function runTask() { 
   	print_r("customer");
   	echo "<br>";
+  	$this->processQueue();
     $this->checkAndInvoke();
   }
 }

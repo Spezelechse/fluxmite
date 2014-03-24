@@ -11,7 +11,6 @@ namespace Drupal\fluxmite\Plugin\Rules\Event;
  * Event handler for time entities.
  */
 class MiteTimeEntryEventHandler extends MiteEventHandlerBase {
-
   /**
    * Defines the event.
    */

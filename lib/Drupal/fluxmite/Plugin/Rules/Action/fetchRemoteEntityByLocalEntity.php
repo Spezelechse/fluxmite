@@ -49,7 +49,10 @@ class fetchRemoteEntityByLocalEntity extends RulesPluginHandlerBase implements \
     $res=$res->fetchAssoc();
 
     if($res){
-      $remote_entity=entity_load_single($res['remote_type'], $res['remote_id']);
+      if(!$remote_entity=entity_load_single($res['remote_type'], $res['remote_id'])){
+        $remote_entity=$local_entity;
+        $res['remote_type']=$local_entity->entityType();
+      }
 
       return array('entity_fetched' => entity_metadata_wrapper($res['remote_type'],$remote_entity));
     }

@@ -9,13 +9,13 @@ namespace Drupal\fluxmite;
 
 use Drupal\fluxservice\Entity\FluxEntityInterface;
 use Drupal\fluxservice\Entity\RemoteEntityInterface;
-use Drupal\fluxmite\Plugin\Rules\Event\MiteTimeEntryEventHandler;
+use Guzzle\Http\Exception\BadResponseException;
 
 /**
  * Class RemoteEntityController
  */
 class MiteTimeEntryController extends MiteControllerBase {
-
+ 
   /**
    * {@inheritdoc}
    */
@@ -24,14 +24,23 @@ class MiteTimeEntryController extends MiteControllerBase {
     $ids=array_values($ids);
     $client = $agent->client();
     
-    foreach ($ids as $id) {
-      if($response=$client->getTime_entry(array('id'=>(int)$id, 'api_key'=>$client->getConfig('access_token')))){
+    try{
+	    foreach ($ids as $id) {
+	      if($response=$client->getTime_entry(array('id'=>(int)$id, 'api_key'=>$client->getConfig('access_token')))){
 
-        $search=array_keys($this->miteSpecialFields());
-        $replace=array_values($this->miteSpecialFields());
+	        $search=array_keys($this->miteSpecialFields());
+	        $replace=array_values($this->miteSpecialFields());
 
-        $output[$id]=json_decode(str_replace($search,$replace,json_encode($response)), 1);
-      }
+	        $output[$id]=json_decode(str_replace($search,$replace,json_encode($response)), 1);
+	      }
+	    }
+    }
+  	catch(BadResponseException $e){
+       if($e->getResponse()->getStatusCode()==404){
+         $this->handle404('[404] Host "'.$client->getBaseUrl().'" not found (getTime_entry)');
+       }
+       else{
+       }
     }
 
     return $output;
@@ -42,5 +51,5 @@ class MiteTimeEntryController extends MiteControllerBase {
    */
   protected function sendToService(RemoteEntityInterface $entity) {
     // @todo Throw exception.
-  }
+  } 
 }

@@ -38,7 +38,7 @@ class updateRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
           'wrapped' => FALSE,
           'required' => TRUE,
         ),
-      ),
+      )
     );
   }
 
@@ -46,8 +46,18 @@ class updateRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
    * Executes the action.
    */
   public function execute(MiteAccountInterface $account, $remote_entity, $local_entity) {
+    dpm("update remote");
+    print_r("update remote<br>");
+    
     $controller = entity_get_controller($remote_entity->entityType());
     
-    $controller->updateRemote($remote_entity, $local_entity, $account);
+    $remote = $controller->updateRemote($local_entity->id, $local_entity->entityType(), $account, $remote_entity);
+
+    //local update
+    if(isset($remote)){
+      $res=db_query("SELECT event FROM {rules_trigger} WHERE event LIKE :type", array(':type'=>$remote_entity->entityType().'_event--%'));
+      $res=$res->fetch();
+      rules_invoke_event($res->event, $account, $remote, 'update', $local_entity->id);
+    }
   }
 }

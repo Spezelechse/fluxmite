@@ -37,7 +37,7 @@ class createRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
           'wrapped' => FALSE,
           'required' => TRUE,
         ),
-      ),
+      )
     );
   }
 
@@ -45,8 +45,18 @@ class createRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
    * Executes the action.
    */
   public function execute($remote_entity, MiteAccountInterface $account, $local_entity) {
+    dpm("create remote");
+    print_r("create remote<br>");
     $controller = entity_get_controller($remote_entity->entityType());
     
-    $controller->createRemote($remote_entity, $local_entity, $account);
+    $remote = $controller->createRemote($local_entity->id, $local_entity->entityType(), $account, $remote_entity);
+
+    //update local
+    if(isset($remote)){
+      $res=db_query("SELECT event FROM {rules_trigger} WHERE event LIKE :type", array(':type'=>$remote_entity->entityType().'_event--%'));
+      $res=$res->fetch();
+
+      rules_invoke_event($res->event, $account, $remote, 'update',$local_entity->id);
+    }
   }
 }

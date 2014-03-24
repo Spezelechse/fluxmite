@@ -10,22 +10,22 @@ namespace Drupal\fluxmite;
 use Drupal\fluxservice\Entity\FluxEntityInterface;
 use Drupal\fluxservice\RemoteEntityController;
 use Drupal\fluxservice\Entity\RemoteEntityInterface;
+use Guzzle\Http\Exception\BadResponseException;
 
 /**
  * Class RemoteEntityController
  */
 abstract class MiteControllerBase extends RemoteEntityController {
-
 /**
  * Creates a new database entry
  */
-  public function createLocal(RemoteEntityInterface $entity, $local_entity){
+  public function createLocal(RemoteEntityInterface $entity, $local_entity_id, $local_entity_type){
     $mite_id=explode(':', $entity->id);
     $mite_id=$mite_id[2];
 
     $fields=array('id', 'type', 'remote_id', 'remote_type', 'mite_id', 'touched_last', 'created_at', 'updated_at');
-    $values=array($local_entity->id, 
-                  $local_entity->entityType(), 
+    $values=array($local_entity_id, 
+                  $local_entity_type, 
                   $entity->id, 
                   $entity->entityType(), 
                   $mite_id,
@@ -39,35 +39,65 @@ abstract class MiteControllerBase extends RemoteEntityController {
 /**
  *    Sends a post request to create a new mite data set of the given type
  */
-  public function createRemote(RemoteEntityInterface $entity, $local_entity, $account){
-      $req=$this->createRequestString($entity);
+  public function createRemote($local_entity_id, $local_entity_type, $account, $entity, $request="", $remote_type=""){
+      if($entity!=null){
+        $req=$this->createRequestString($entity);
+        $type_org=$entity->entityType();
+      }
+      else if($request!=""){
+        $req=$request;
+        $type_org=$remote_type;
+      }
+      else{
+        //TODO: throw error missing argument
+      }
 
       //extract mite type
-      $type=$entity->entityType();
+      $type=$type_org;
       $type_split=explode("_",$type);
       $type=$type_split[1];
-      $type=ucfirst($type);
 
-      if($type=='Time'){
+      if($type=='time'){
         $type.='_'.$type_split[2];
       }
 
       $client=$account->client();
 
-      //send the post request
-      $operation='post'.$type;
-      $response=$client->$operation(array('data' => $req, 'api_key'=>$client->getConfig('access_token')));
+      //build operation name
+      $operation='post'.ucfirst($type);
+      
+      //try to send the post request
+      try{
+        $response=$client->$operation(array('data' => $req, 'api_key'=>$client->getConfig('access_token')));
+      }
+      catch(BadResponseException $e){
+        if($e->getResponse()->getStatusCode()==404){
+          $this->handle404( '[404] Host "'.$account->client()->getBaseUrl().'" not found ('.$operation.')',
+                            array(
+                              'task_type'=>'post',
+                              'task_priority'=>2,
+                              'local_id'=>$local_entity_id,
+                              'local_type'=>$local_entity_type,
+                              'request'=>$req,
+                              'remote_type'=>$type_org));
+        }
+        else{
+        }
+      }
 
-      //generate an array from xml
-      $search=array_keys($this->miteSpecialFields());
-      $replace=array_values($this->miteSpecialFields());
+      if(isset($response)){
+        //generate an array from xml
+        $search=array_keys($this->miteSpecialFields());
+        $replace=array_values($this->miteSpecialFields());
 
-      $response = json_decode(str_replace($search,$replace,json_encode($response)),1);
+        $response = json_decode(str_replace($search,$replace,json_encode($response)),1);
 
-      $remoteEntity = fluxservice_entify($response, $entity->entityType(), $account);
+        $remoteEntity = fluxservice_entify($response, $type_org, $account);
 
-      //create local database entry
-      $this->createLocal($remoteEntity, $local_entity);
+        //create local database entry
+        $this->createLocal($remoteEntity, $local_entity_id, $local_entity_type);
+        return $remoteEntity;
+      }
   }
 
   /**
@@ -101,7 +131,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
         //special for date types
         if($key=='date_at'){
           if(isset($value)){
-            $value=date('Y-m-d',$entity->date_at_timestamp);
+            $value=date('Y-m-d',$value);
           }
           else{
             $avlue=date('Y-m-d');
@@ -131,7 +161,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
     return $req;
   }
 
-  public function deleteRemote($local, $account, $remote_type, $mite_id){
+  public function deleteRemote($local_entity_id, $local_entity_type, $account, $remote_type, $mite_id){
     $type_split=explode("_",$remote_type);
     $type=$type_split[1];
 
@@ -140,34 +170,58 @@ abstract class MiteControllerBase extends RemoteEntityController {
     }
       
     $client=$account->client();
+    
+    //build operation name
     $operation='delete'.ucfirst($type);
-    $response=$client->$operation(array(  'id' => (int)$mite_id,
-                                          'api_key'=>$client->getConfig('access_token')));
 
-    if($response['status']==200){
-      $num=db_delete('fluxmite')->condition('id', $local->id)->condition('type', $local->entityType())->execute();
-
-      if($num<=0){
-        //TODO: throw exception
+    //try to send delete request
+    try{
+      $response=$client->$operation(array(  'id' => (int)$mite_id,
+                                            'api_key'=>$client->getConfig('access_token')));
+    }
+    catch(BadResponseException $e){
+      if($e->getResponse()->getStatusCode()==404){
+        $this->handle404( '[404] Host "'.$account->client()->getBaseUrl().'" not found ('.$operation.')',
+                          array(
+                            'task_type'=>'delete',
+                            'task_priority'=>0,
+                            'local_id'=>$local_entity_id,
+                            'local_type'=>$local_entity_type,
+                            'remote_type'=>$remote_type,
+                            'mite_id'=>$mite_id));
       }
+      else{
+      }
+    }
+
+    if(isset($response['status'])&&$response['status']==200){
+      $num=db_delete('fluxmite')->condition('id', $local_entity_id)->condition('type', $local_entity_type)->execute();
     }
   }
 
   /**
    *  Updates the local fluxmite table
    */
-  public function updateLocal(RemoteEntityInterface $entity, $local_entity){
+  public function updateLocal(RemoteEntityInterface $entity, $local_entity_id, $local_entity_type){
     $fields=array('updated_at'=>strtotime($entity->updated_at));
 
-    db_update('fluxmite')->fields($fields)->condition('id', $local_entity->id, '=')->execute();
+    db_update('fluxmite')->fields($fields)->condition('id', $local_entity_id, '=')->condition('type', $local_entity_type, '=')->execute();
   }
 
 
   /**
   *   Sends a put request to update a mite data set and if successful updates the local table
   */
-  public function updateRemote(RemoteEntityInterface $entity, $local_entity, $account){
-    $req=$this->createRequestString($entity);
+  public function updateRemote($local_entity_id, $local_entity_type, $account, $entity=null, $request=""){
+    if($entity!=null){
+      $req=$this->createRequestString($entity);
+    }
+    else if($request!=""){
+      $req=$request;
+    }
+    else{
+      //TODO: throw error missing argument
+    }
 
     //extract mite id
     $id=$entity->id;
@@ -178,24 +232,41 @@ abstract class MiteControllerBase extends RemoteEntityController {
     $type=$entity->entityType();
     $type_split=explode("_",$type);
     $type=$type_split[1];
-    $type=ucfirst($type);
 
-    if($type=='Time'){
+    if($type=='time'){
         $type.='_'.$type_split[2];
     }  
 
     $client=$account->client();
 
-    //send the update request
-    $operation='put'.$type;
-    $response=$client->$operation(array( 'data' => $req, 
-                                          'id' => (int)$id,
-                                          'api_key'=>$client->getConfig('access_token')));
+    //build operation name
+    $operation='put'.ucfirst($type);
+
+    //try to send the update request
+    try{
+      $response=$client->$operation(array( 'data' => $req, 
+                                            'id' => (int)$id,
+                                            'api_key'=>$client->getConfig('access_token')));
+    }
+    catch(BadResponseException $e){
+      if($e->getResponse()->getStatusCode()==404){
+        $this->handle404( '[404] Host "'.$account->client()->getBaseUrl().'" not found ('.$operation.')', 
+                          array(
+                            'task_type'=>'put',
+                            'task_priority'=>1,
+                            'local_id'=>$local_entity_id,
+                            'local_type'=>$local_entity_type,
+                            'request'=>$req,
+                            'remote_type'=>$entity->entityType()));
+      }
+      else{
+      }
+    }
 
     //check if successful
-    if($response['status']==200){
+    if(isset($response['status'])&&$response['status']==200){
       //get the new updated-at timestamp
-      $operation='get'.$type;
+      $operation='get'.ucfirst($type);
       $response=$client->$operation(array('id' => (int)$id,
                                           'api_key'=>$client->getConfig('access_token')));
 
@@ -208,7 +279,8 @@ abstract class MiteControllerBase extends RemoteEntityController {
       $remoteEntity = fluxservice_entify($response, $entity->entityType(), $account);
 
       //update local database entry
-      $this->updateLocal($remoteEntity, $local_entity); 
+      $this->updateLocal($remoteEntity, $local_entity_id, $local_entity_type);
+      return $remoteEntity;
     }
   }
 
@@ -237,5 +309,15 @@ abstract class MiteControllerBase extends RemoteEntityController {
       'service-name' => 'service_name',
       'time-entry' => 'time_entry',
       );
+  }
+
+  /**
+   * 
+   */
+  public function handle404($message, $data=array()){
+    if($data!=array()){
+      MiteTaskQueue::addTask($data);
+    }
+    watchdog('Fluxmite',$message);
   }
 }
