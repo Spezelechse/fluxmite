@@ -103,10 +103,12 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
     //extract the entity type from the event type
     $type_split=explode("_",$this->getEvent());
     $type=$type_split[1];
+    $mite_type=$type;
 
     //workaround for time_entries
     if($type=='time'){
       $type.='_'.$type_split[2];
+      $mite_type.='-'.$type_split[2];
     }
 
     //get all mite data
@@ -115,13 +117,10 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
     try{
       $data_sets = $account->client()->$operation(array('api_key' => $account->getAccessToken()));
         
-      //get replace params
-      $controller=entity_get_controller('fluxmite_'.$type);
-      $search=array_keys($controller->miteSpecialFields());
-      $replace=array_values($controller->miteSpecialFields());
+      //$pattern = '~(?:<|\G(?<!^))(?:[^>-]+)*\K\-~';
 
       //generate an array from xml
-      $data_sets = json_decode(str_replace($search,$replace,json_encode($data_sets)),1);
+      $data_sets = json_decode(json_encode($data_sets),1);
     }
     catch(BadResponseException $e){
       if($e->getResponse()->getStatusCode()==404){
@@ -130,7 +129,7 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
     }
 
     //if stuff is available process it
-    if(isset($data_sets[$type])){
+    if(isset($data_sets[$mite_type])){
 
       //arrays to store the entities which invoke events (something happend)
       $create=array();
@@ -145,13 +144,13 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
       $last_check=$last_check->time;
 
       //check all data_sets
-      if(isset($data_sets[$type][0])){//multiple
-        foreach($data_sets[$type] as $data_set){
+      if(isset($data_sets[$mite_type][0])){//multiple
+        foreach($data_sets[$mite_type] as $data_set){
           $this->checkSingleResponseSet($data_set, $create, $delete, $delete_local_ids, $update, $update_local_ids);
         }
       }
       else{//single
-        $this->checkSingleResponseSet($data_sets[$type], $create, $delete, $delete_local_ids, $update, $update_local_ids);
+        $this->checkSingleResponseSet($data_sets[$mite_type], $create, $delete, $delete_local_ids, $update, $update_local_ids);
       }
 
       //get deleted id's
@@ -179,7 +178,7 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
 
     if($res){
       //check for updates
-      if($res['updated_at']<strtotime($data_set['updated_at'])){
+      if($res['updated_at']<strtotime($data_set['updated-at'])){
         array_push($update, $data_set);
         array_push($update_local_ids, $res['id']);
       }
@@ -221,7 +220,7 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
                                   $task->remote_type);
 
         if(isset($remote)){
-          rules_invoke_event($this->getEvent(), $this->getAccount(), $remote, 'update');
+          rules_invoke_event($this->getEvent(), $this->getAccount(), $remote, 'update', $task->local_id);
         }
       }
       else if($task->task_type=='put'){

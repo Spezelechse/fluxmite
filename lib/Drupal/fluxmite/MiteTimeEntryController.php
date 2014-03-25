@@ -31,7 +31,7 @@ class MiteTimeEntryController extends MiteControllerBase {
 	        $search=array_keys($this->miteSpecialFields());
 	        $replace=array_values($this->miteSpecialFields());
 
-	        $output[$id]=json_decode(str_replace($search,$replace,json_encode($response)), 1);
+	        $output[$id]=json_decode(json_encode($response), 1);
 	      }
 	    }
     }

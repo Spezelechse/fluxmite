@@ -87,10 +87,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
 
       if(isset($response)){
         //generate an array from xml
-        $search=array_keys($this->miteSpecialFields());
-        $replace=array_values($this->miteSpecialFields());
-
-        $response = json_decode(str_replace($search,$replace,json_encode($response)),1);
+        $response = json_decode(json_encode($response),1);
 
         $remoteEntity = fluxservice_entify($response, $type_org, $account);
 
@@ -125,8 +122,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
 
       if(isset($entity->$key)){
         $value=$entity->$key;
-        
-        //TODO: implement array datatypes
+        $data_type='';
 
         //special for date types
         if($key=='date_at'){
@@ -134,7 +130,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
             $value=date('Y-m-d',$value);
           }
           else{
-            $avlue=date('Y-m-d');
+            $value=date('Y-m-d');
           }
         }
         else if($key=='since'){
@@ -142,22 +138,33 @@ abstract class MiteControllerBase extends RemoteEntityController {
             $value=date('Y-m-d\TH:m:sP',$value);
           }
           else{
-            $avlue=date('Y-m-d\TH:m:sP');
+            $value=date('Y-m-d\TH:m:sP');
           }
         }
+        else if($key=='hourly_rates_per_service'){
+          $buffer=json_decode($value);
 
-        if(getType($value)!='array'){
-          $req.="<".$key.">".$value."</".$key.">"; 
+          if(gettype($buffer)!='array'){
+            $buffer=array($buffer);
+          }
+
+          $value='';
+          foreach ($buffer as $rate) {
+            $value.='<hourly-rate-per-service>';
+              $value.='<service-id type="integer">'.$rate->{"service-id"}.'</service-id>';
+              $value.='<hourly-rate type="integer">'.$rate->{"hourly-rate"}.'</hourly-rate>';
+            $value.='</hourly-rate-per-service>';
+          }
+          $data_type='type="array"';
         }
+
+        $key=str_replace('_', '-', $key);
+        $req.="<".$key." ".$data_type.">".$value."</".$key.">"; 
       }
     }
 
     $req="<".$type.">".$req."</".$type.">";
 
-    $search=array_values($this->miteSpecialFields());
-    $replace=array_keys($this->miteSpecialFields());
-
-    $req=str_replace($search, $replace, $req);
     return $req;
   }
 
@@ -271,10 +278,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
                                           'api_key'=>$client->getConfig('access_token')));
 
       //generate an array from xml
-      $search=array_keys($this->miteSpecialFields());
-      $replace=array_values($this->miteSpecialFields());
-
-      $response = json_decode(str_replace($search,$replace,json_encode($response)),1);
+      $response = json_decode(json_encode($response),1);
 
       $remoteEntity = fluxservice_entify($response, $entity->entityType(), $account);
 

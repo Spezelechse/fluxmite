@@ -16,7 +16,9 @@ class MiteTimeEntry extends MiteEntityBase implements MiteTimeEntryInterface {
    public function __construct(array $values = array(), $entity_type = NULL) {
     parent::__construct($values, $entity_type);
     
-    $this->date_at=strtotime($this->date_at);
+    if(isset($this->date_at)){
+      $this->date_at=strtotime($this->date_at);
+    }
   }
   /**
    * Defines the entity type.

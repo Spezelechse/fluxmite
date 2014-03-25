@@ -13,6 +13,13 @@ use Drupal\fluxservice\Entity\RemoteEntity;
  * Entity class for Mite Projects.
  */
 class MiteProject extends MiteEntityBase implements MiteProjectInterface {
+  public function __construct(array $values = array(), $entity_type = NULL) {
+    parent::__construct($values, $entity_type);
+
+    $rates=$this->hourly_rates_per_service;
+
+    $this->hourly_rates_per_service=json_encode($rates['hourly-rate-per-service']);
+  }
 
   /**
    * Defines the entity type.

@@ -52,7 +52,7 @@ class updateRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
     $controller = entity_get_controller($remote_entity->entityType());
     
     $remote = $controller->updateRemote($local_entity->id, $local_entity->entityType(), $account, $remote_entity);
-
+    
     //local update
     if(isset($remote)){
       $res=db_query("SELECT event FROM {rules_trigger} WHERE event LIKE :type", array(':type'=>$remote_entity->entityType().'_event--%'));
