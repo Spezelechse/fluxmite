@@ -28,9 +28,6 @@ class MiteServiceController extends MiteControllerBase {
 	    foreach ($ids as $id) {
 	      if($response=$client->getService(array('id'=>(int)$id, 'api_key'=>$client->getConfig('access_token')))){
 
-	        $search=array_keys($this->miteSpecialFields());
-	        $replace=array_values($this->miteSpecialFields());
-
 	        $output[$id]=json_decode(json_encode($response), 1);
 	      }
 	    }

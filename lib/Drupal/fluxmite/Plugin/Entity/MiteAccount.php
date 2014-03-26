@@ -41,6 +41,13 @@ class MiteAccount extends MiteEntityBase implements MiteAccountInterface {
     $info['id'] = array(
       'label' => t('Id'),
       'description' => t("Account id."),
+      'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
+    );
+    
+    $info['mite_id'] = array(
+      'label' => t('Mite id'),
+      'description' => t("Mite id."),
       'type' => 'integer',
       'setter callback' => 'entity_property_verbatim_set',
     );

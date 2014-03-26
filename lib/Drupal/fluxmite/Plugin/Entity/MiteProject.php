@@ -18,7 +18,12 @@ class MiteProject extends MiteEntityBase implements MiteProjectInterface {
 
     $rates=$this->hourly_rates_per_service;
 
-    $this->hourly_rates_per_service=json_encode($rates['hourly-rate-per-service']);
+    if(isset($rates['hourly-rate-per-service'])){
+      $this->hourly_rates_per_service=json_encode($rates['hourly-rate-per-service']);
+    }
+    else{
+      $this->hourly_rates_per_service="";
+    }
   }
 
   /**
@@ -48,6 +53,12 @@ class MiteProject extends MiteEntityBase implements MiteProjectInterface {
     $info['id'] = array(
       'label' => t('Id'),
       'description' => t("Project id."),
+      'type' => 'text',
+      'setter callback' => 'entity_property_verbatim_set',
+    );
+    $info['mite_id'] = array(
+      'label' => t('Mite id'),
+      'description' => t("Mite id."),
       'type' => 'integer',
       'setter callback' => 'entity_property_verbatim_set',
     );

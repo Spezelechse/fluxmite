@@ -38,6 +38,12 @@ class updateRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
           'wrapped' => FALSE,
           'required' => TRUE,
         ),
+        /*'update_local' => array(
+          'type' => 'boolean',
+          'label' => t('Update local entity'),
+          'required' => FALSE,
+          'description' => t('Only needed when id properties are used (e.g. service-id, project-id, ...).'),
+          )*/
       )
     );
   }

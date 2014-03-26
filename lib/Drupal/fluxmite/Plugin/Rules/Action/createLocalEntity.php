@@ -24,13 +24,13 @@ class createLocalEntity extends RulesPluginHandlerBase implements \RulesActionHa
       'name' => 'fluxmite_create_local_entity',
       'label' => t('Create local entity'),
       'parameter' => array(
+        'account' => static::getServiceParameterInfo(),
         'remote_entity' => array(
           'type' => 'entity',
           'label' => t('Mite: Entity'),
           'wrapped' => FALSE,
           'required' => TRUE,
         ),
-        'account' => static::getServiceParameterInfo(),
         'local_entity' => array(
           'type' => 'entity',
           'label' => t('Local: Entity'),
@@ -44,7 +44,7 @@ class createLocalEntity extends RulesPluginHandlerBase implements \RulesActionHa
   /**
    * Executes the action.
    */
-  public function execute($remote_entity, MiteAccountInterface $account, $local_entity) {
+  public function execute(MiteAccountInterface $account, $remote_entity, $local_entity) {
     dpm("create local");
     print_r("create local<br>");
 

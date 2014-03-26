@@ -81,7 +81,7 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
 
       $i=0;
       if($entities){
-        foreach ($entities as $key => $entity) {
+        foreach ($entities as $entity) {
           if(!empty($local_entity_ids)){
             $local_entity_id=$local_entity_ids[$i++];
             rules_invoke_event($this->getEvent(), $account, $entity, $change_type, $local_entity_id);
@@ -213,11 +213,11 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
       if($task->task_type=='post'){
         $controller = entity_get_controller($task->remote_type);
         $remote=$controller->createRemote($task->local_id,
-                                  $task->local_type,
-                                  $this->getAccount(),
-                                  null,
-                                  $task->request,
-                                  $task->remote_type);
+                                          $task->local_type,
+                                          $this->getAccount(),
+                                          null,
+                                          $task->request,
+                                          $task->remote_type);
 
         if(isset($remote)){
           rules_invoke_event($this->getEvent(), $this->getAccount(), $remote, 'update', $task->local_id);

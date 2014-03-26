@@ -55,11 +55,5 @@
  			->condition('id',$id,'=')
  			->execute();
  	}
-
- 	public function removeTask($id){
- 		db_delete('fluxmite_queue')
- 			->condition('id',$id,'=')
- 			->execute();
- 	}
  }
  ?>

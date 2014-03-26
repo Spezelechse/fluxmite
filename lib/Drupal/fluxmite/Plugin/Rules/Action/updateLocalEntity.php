@@ -24,13 +24,13 @@ class updateLocalEntity extends RulesPluginHandlerBase implements \RulesActionHa
       'name' => 'fluxmite_update_local_entity',
       'label' => t('Update local entity'),
       'parameter' => array(
+        'account' => static::getServiceParameterInfo(),
         'remote_entity' => array(
           'type' => 'entity',
           'label' => t('Mite: Entity'),
           'wrapped' => FALSE,
           'required' => TRUE,
         ),
-        'account' => static::getServiceParameterInfo(),
         'local_entity' => array(
           'type' => 'entity',
           'label' => t('Local: Entity'),
@@ -44,7 +44,7 @@ class updateLocalEntity extends RulesPluginHandlerBase implements \RulesActionHa
   /**
    * Executes the action.
    */
-  public function execute($remote_entity, MiteAccountInterface $account, $local_entity) {
+  public function execute(MiteAccountInterface $account, $remote_entity, $local_entity) {
     dpm("update local");
     print_r("update local<br>");
     $controller = entity_get_controller($remote_entity->entityType());

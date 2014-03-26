@@ -33,7 +33,9 @@ class fetchRemoteEntityByLocalEntity extends RulesPluginHandlerBase implements \
         ),
       ),
       'provides' => array(
-        'entity_fetched' => array('type'=>'entity','label' => t('Fetched entity')),
+        'entity_fetched' => array(
+          'type'=>'entity',
+          'label' => t('Fetched entity')),
       )
     );
   }

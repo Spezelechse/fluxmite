@@ -19,30 +19,33 @@ abstract class MiteControllerBase extends RemoteEntityController {
 /**
  * Creates a new database entry
  */
-  public function createLocal(RemoteEntityInterface $entity, $local_entity_id, $local_entity_type){
-    $mite_id=explode(':', $entity->id);
+  public function createLocal(RemoteEntityInterface $remote_entity, $local_entity_id, $local_entity_type){
+    $mite_id=explode(':', $remote_entity->id);
     $mite_id=$mite_id[2];
 
     $fields=array('id', 'type', 'remote_id', 'remote_type', 'mite_id', 'touched_last', 'created_at', 'updated_at');
     $values=array($local_entity_id, 
                   $local_entity_type, 
-                  $entity->id, 
-                  $entity->entityType(), 
+                  $remote_entity->id, 
+                  $remote_entity->entityType(), 
                   $mite_id,
                   time(),
-                  strtotime($entity->created_at), 
-                  strtotime($entity->updated_at));
+                  strtotime($remote_entity->created_at), 
+                  strtotime($remote_entity->updated_at));
 
-    $nid=db_insert('fluxmite')->fields($fields)->values($values)->execute();
+    $nid=db_insert('fluxmite')
+      ->fields($fields)
+      ->values($values)
+      ->execute();
   }
 
 /**
  *    Sends a post request to create a new mite data set of the given type
  */
-  public function createRemote($local_entity_id, $local_entity_type, $account, $entity, $request="", $remote_type=""){
-      if($entity!=null){
-        $req=$this->createRequestString($entity);
-        $type_org=$entity->entityType();
+  public function createRemote($local_entity_id, $local_entity_type, $account, $remote_entity, $request="", $remote_type=""){
+      if($remote_entity!=null){
+        $req=$this->createRequestString($remote_entity);
+        $type_org=$remote_entity->entityType();
       }
       else if($request!=""){
         $req=$request;
@@ -100,11 +103,11 @@ abstract class MiteControllerBase extends RemoteEntityController {
   /**
    *  Builds an xml request string for the given entity
    */
-  private function createRequestString(RemoteEntityInterface $entity){
-    $properties=$entity->getEntityPropertyInfo("","");
+  private function createRequestString(RemoteEntityInterface $remote_entity){
+    $properties=$remote_entity->getEntityPropertyInfo("","");
 
     //extract mite type
-    $type=$entity->entityType();
+    $type=$remote_entity->entityType();
     $type_split=explode("_",$type);
     $req="";
 
@@ -113,18 +116,17 @@ abstract class MiteControllerBase extends RemoteEntityController {
         $type.='-'.$type_split[2];
     }
       
-
     //generate a xml element for every set entity property
     foreach ($properties as $key => $value) {
-      if($key=='id'||$key=='updated_at'||$key=='created_at'||$key=='date_at_timestamp'){
+      if($key=='id'||$key=='updated_at'||$key=='created_at'){
         continue;
       }
 
-      if(isset($entity->$key)){
-        $value=$entity->$key;
+      if(isset($remote_entity->$key)){
+        $value=$remote_entity->$key;
         $data_type='';
 
-        //special for date types
+        //special for date types and arrays
         if($key=='date_at'){
           if(isset($value)){
             $value=date('Y-m-d',$value);
@@ -142,24 +144,27 @@ abstract class MiteControllerBase extends RemoteEntityController {
           }
         }
         else if($key=='hourly_rates_per_service'){
-          $buffer=json_decode($value);
+          if(isset($value)&&$value!=""){
+            //build array from json
+            $buffer=json_decode($value);
 
-          if(gettype($buffer)!='array'){
-            $buffer=array($buffer);
-          }
+            if(gettype($buffer)!='array'){
+              $buffer=array($buffer);
+            }
 
-          $value='';
-          foreach ($buffer as $rate) {
-            $value.='<hourly-rate-per-service>';
-              $value.='<service-id type="integer">'.$rate->{"service-id"}.'</service-id>';
-              $value.='<hourly-rate type="integer">'.$rate->{"hourly-rate"}.'</hourly-rate>';
-            $value.='</hourly-rate-per-service>';
+            $value='';
+            foreach ($buffer as $rate) {
+              $value.='<hourly-rate-per-service>';
+                $value.='<service-id type="integer">'.$rate->{"service-id"}.'</service-id>';
+                $value.='<hourly-rate type="integer">'.$rate->{"hourly-rate"}.'</hourly-rate>';
+              $value.='</hourly-rate-per-service>';
+            }
+            $data_type=' type="array"';
           }
-          $data_type='type="array"';
         }
 
         $key=str_replace('_', '-', $key);
-        $req.="<".$key." ".$data_type.">".$value."</".$key.">"; 
+        $req.="<".$key."".$data_type.">".$value."</".$key.">"; 
       }
     }
 
@@ -209,34 +214,30 @@ abstract class MiteControllerBase extends RemoteEntityController {
   /**
    *  Updates the local fluxmite table
    */
-  public function updateLocal(RemoteEntityInterface $entity, $local_entity_id, $local_entity_type){
-    $fields=array('updated_at'=>strtotime($entity->updated_at));
+  public function updateLocal(RemoteEntityInterface $remote_entity, $local_entity_id, $local_entity_type){
+    $fields=array('updated_at'=>strtotime($remote_entity->updated_at));
 
-    db_update('fluxmite')->fields($fields)->condition('id', $local_entity_id, '=')->condition('type', $local_entity_type, '=')->execute();
+    db_update('fluxmite')
+      ->fields($fields)
+      ->condition('id', $local_entity_id, '=')
+      ->condition('type', $local_entity_type, '=')
+      ->execute();
   }
 
 
   /**
   *   Sends a put request to update a mite data set and if successful updates the local table
   */
-  public function updateRemote($local_entity_id, $local_entity_type, $account, $entity=null, $request=""){
-    if($entity!=null){
-      $req=$this->createRequestString($entity);
-    }
-    else if($request!=""){
-      $req=$request;
-    }
-    else{
-      //TODO: throw error missing argument
-    }
+  public function updateRemote($local_entity_id, $local_entity_type, $account, $remote_entity){
+    $req=$this->createRequestString($remote_entity);
 
     //extract mite id
-    $id=$entity->id;
+    $id=$remote_entity->id;
     $id=explode(':', $id);
     $id=$id[2];
 
     //extract mite type
-    $type=$entity->entityType();
+    $type=$remote_entity->entityType();
     $type_split=explode("_",$type);
     $type=$type_split[1];
 
@@ -251,7 +252,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
 
     //try to send the update request
     try{
-      $response=$client->$operation(array( 'data' => $req, 
+      $response=$client->$operation(array(  'data' => $req, 
                                             'id' => (int)$id,
                                             'api_key'=>$client->getConfig('access_token')));
     }
@@ -264,7 +265,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
                             'local_id'=>$local_entity_id,
                             'local_type'=>$local_entity_type,
                             'request'=>$req,
-                            'remote_type'=>$entity->entityType()));
+                            'remote_type'=>$remote_entity->entityType()));
       }
       else{
       }
@@ -280,39 +281,12 @@ abstract class MiteControllerBase extends RemoteEntityController {
       //generate an array from xml
       $response = json_decode(json_encode($response),1);
 
-      $remoteEntity = fluxservice_entify($response, $entity->entityType(), $account);
+      $remoteEntity = fluxservice_entify($response, $remote_entity->entityType(), $account);
 
       //update local database entry
       $this->updateLocal($remoteEntity, $local_entity_id, $local_entity_type);
       return $remoteEntity;
     }
-  }
-
-  /**
-   * returns an assoc array with "special" fields from mite (which contain hyphens)
-   * key = original
-   * value = to use local
-   */
-  public function miteSpecialFields(){
-    return array(
-      'created-at' => 'created_at',
-      'updated-at' => 'updated_at',
-      'active-hourly-rate' => 'active_hourly_rate',
-      'hourly-rates-per-service' => 'hourly_rates_per_service',
-      'hourly-rate-per-service' => 'hourly_rate_per_service',
-      'hourly-rate' => 'hourly_rate',
-      'budget-type' => 'budget_type',
-      'customer-id' => 'customer_id',
-      'customer-name' => 'customer_name',
-      'date-at' => 'date_at',
-      'user-id' => 'user_id',
-      'user-name' => 'user_name',
-      'project-id' => 'project_id',
-      'project-name' => 'project_name',
-      'service-id' => 'service_id',
-      'service-name' => 'service_name',
-      'time-entry' => 'time_entry',
-      );
   }
 
   /**
