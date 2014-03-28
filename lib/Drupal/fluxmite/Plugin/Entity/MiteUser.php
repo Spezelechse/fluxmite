@@ -12,7 +12,7 @@ use Drupal\fluxservice\Entity\RemoteEntity;
 /**
  * Entity class for Mite users.
  */
-class MiteUser extends RemoteEntity implements MiteEntityBaseInterface {
+class MiteUser extends MiteEntityBase implements MiteUserInterface {
 
   /**
    * Defines the entity type.

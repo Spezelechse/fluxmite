@@ -20,15 +20,12 @@ abstract class MiteControllerBase extends RemoteEntityController {
  * Creates a new database entry
  */
   public function createLocal(RemoteEntityInterface $remote_entity, $local_entity_id, $local_entity_type){
-    $mite_id=explode(':', $remote_entity->id);
-    $mite_id=$mite_id[2];
-
     $fields=array('id', 'type', 'remote_id', 'remote_type', 'mite_id', 'touched_last', 'created_at', 'updated_at');
     $values=array($local_entity_id, 
                   $local_entity_type, 
                   $remote_entity->id, 
                   $remote_entity->entityType(), 
-                  $mite_id,
+                  $remote_entity->mite_id,
                   time(),
                   strtotime($remote_entity->created_at), 
                   strtotime($remote_entity->updated_at));
@@ -82,7 +79,8 @@ abstract class MiteControllerBase extends RemoteEntityController {
                               'local_id'=>$local_entity_id,
                               'local_type'=>$local_entity_type,
                               'request'=>$req,
-                              'remote_type'=>$type_org));
+                              'remote_type'=>$type_org),
+                          $e->getResponse()->getMessage());
         }
         else{
         }
@@ -126,7 +124,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
         $value=$remote_entity->$key;
         $data_type='';
 
-        //special for date types and arrays
+        //special for dates, arrays and boolean
         if($key=='date_at'){
           if(isset($value)){
             $value=date('Y-m-d',$value);
@@ -162,14 +160,19 @@ abstract class MiteControllerBase extends RemoteEntityController {
             $data_type=' type="array"';
           }
         }
+        else if($key=='billable'||$key=='archived'||$key=='locked'){
+          $value=($value==0 ? 'false' : 'true');
+        }
 
         $key=str_replace('_', '-', $key);
         $req.="<".$key."".$data_type.">".$value."</".$key.">"; 
       }
     }
 
-    $req="<".$type.">".$req."</".$type.">";
+    $req.="<force>true</force>";
 
+    $req="<".$type.">".$req."</".$type.">";
+    dpm($req);
     return $req;
   }
 
@@ -193,20 +196,21 @@ abstract class MiteControllerBase extends RemoteEntityController {
     }
     catch(BadResponseException $e){
       if($e->getResponse()->getStatusCode()==404){
-        $this->handle404( '[404] Host "'.$account->client()->getBaseUrl().'" not found ('.$operation.')',
+        $continue=$this->handle404( '[404] Host "'.$account->client()->getBaseUrl().'" not found ('.$operation.')',
                           array(
                             'task_type'=>'delete',
                             'task_priority'=>0,
                             'local_id'=>$local_entity_id,
                             'local_type'=>$local_entity_type,
                             'remote_type'=>$remote_type,
-                            'mite_id'=>$mite_id));
+                            'mite_id'=>$mite_id),
+                          $e->getResponse()->getMessage());
       }
       else{
       }
     }
 
-    if(isset($response['status'])&&$response['status']==200){
+    if((isset($response['status'])&&$response['status']==200)||$continue){
       $num=db_delete('fluxmite')->condition('id', $local_entity_id)->condition('type', $local_entity_type)->execute();
     }
   }
@@ -231,11 +235,6 @@ abstract class MiteControllerBase extends RemoteEntityController {
   public function updateRemote($local_entity_id, $local_entity_type, $account, $remote_entity){
     $req=$this->createRequestString($remote_entity);
 
-    //extract mite id
-    $id=$remote_entity->id;
-    $id=explode(':', $id);
-    $id=$id[2];
-
     //extract mite type
     $type=$remote_entity->entityType();
     $type_split=explode("_",$type);
@@ -253,7 +252,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
     //try to send the update request
     try{
       $response=$client->$operation(array(  'data' => $req, 
-                                            'id' => (int)$id,
+                                            'id' => (int)$remote_entity->mite_id,
                                             'api_key'=>$client->getConfig('access_token')));
     }
     catch(BadResponseException $e){
@@ -265,7 +264,8 @@ abstract class MiteControllerBase extends RemoteEntityController {
                             'local_id'=>$local_entity_id,
                             'local_type'=>$local_entity_type,
                             'request'=>$req,
-                            'remote_type'=>$remote_entity->entityType()));
+                            'remote_type'=>$remote_entity->entityType()),
+                          $e->getResponse()->getMessage());
       }
       else{
       }
@@ -275,7 +275,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
     if(isset($response['status'])&&$response['status']==200){
       //get the new updated-at timestamp
       $operation='get'.ucfirst($type);
-      $response=$client->$operation(array('id' => (int)$id,
+      $response=$client->$operation(array('id' => (int)$remote_entity->mite_id,
                                           'api_key'=>$client->getConfig('access_token')));
 
       //generate an array from xml
@@ -292,10 +292,16 @@ abstract class MiteControllerBase extends RemoteEntityController {
   /**
    * 
    */
-  public function handle404($message, $data=array()){
-    if($data!=array()){
+  public function handle404($log_message, $data=array(), $response_message=""){
+    $document_not_found_de="Der Datensatz ist nicht vorhanden";
+    $document_not_found_eng="The record does not exist";
+
+    if($data!=array()&&!strpos($response_message,$document_not_found_eng)&&!strpos($response_message,$document_not_found_de)){
       MiteTaskQueue::addTask($data);
+      watchdog('Fluxmite',$log_message);
     }
-    watchdog('Fluxmite',$message);
+    else{
+      return true;
+    }
   }
 }

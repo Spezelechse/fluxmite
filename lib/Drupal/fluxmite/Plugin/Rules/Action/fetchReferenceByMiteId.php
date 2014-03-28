@@ -36,6 +36,12 @@ class fetchReferenceByMiteId extends RulesPluginHandlerBase implements \RulesAct
           'description' => t('Specifies the type of referenced entity.'),
           'restriction' => 'input',
         ),
+        'remote_entity' => array(
+          'type' => 'entity',
+          'label' => t('Remote entity'),
+          'required' => TRUE,
+          'wrapped' => FALSE,
+        ),
       ),
       'provides' => array(
         'reference' => array(
@@ -48,20 +54,22 @@ class fetchReferenceByMiteId extends RulesPluginHandlerBase implements \RulesAct
   /**
    * Executes the action.
    */
-  public function execute($mite_id, $local_type) {
-    $res=db_query("SELECT id, type FROM {fluxmite} WHERE mite_id = :id AND type =  :type", 
+  public function execute($mite_id, $local_type,$remote_entity) {
+    $res=db_query("SELECT id,type, remote_type, mite_id FROM {fluxmite} WHERE mite_id = :id AND type =  :type", 
                   array(  ':id'=>$mite_id, 
                           ':type'=>$local_type));
 
     $res=$res->fetchAssoc();
 
     if($res){
-      if(!$reference=entity_load_single($res['type'], $res['id'])){
-          $reference=$remote_entity;
-          $res['type']=$remote_entity->entityType();
-      }
-
-      return array('reference' => entity_metadata_wrapper($res['type'],$reference));
+      $reference=entity_load_single($res['type'], $res['id']);  
     }
+    else{
+      $res['type']=$remote_entity->entityType();
+
+      $reference=$remote_entity;
+    }
+
+    return array('reference' => entity_metadata_wrapper($res['type'],$reference));
   }
 }

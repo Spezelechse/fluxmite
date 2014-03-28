@@ -59,3 +59,10 @@ function task_type_get_options(){
 function task_priority_get_options(){
 	return array(0,1,2,3,5);
 }
+
+/**
+ * 
+ */
+function change_type_get_options(){
+	return array('create'=>'create','delete'=>'delete','update'=>'update');
+}

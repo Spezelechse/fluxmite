@@ -71,7 +71,7 @@ class MiteTimeEntry extends MiteEntityBase implements MiteTimeEntryInterface {
     $info['revenue'] = array(
       'label' => t('Revenue'),
       'description' => t("Time revenue."),
-      'type' => 'float',
+      'type' => 'decimal',
       'setter callback' => 'entity_property_verbatim_set',
     );
     $info['hourly_rate'] = array(

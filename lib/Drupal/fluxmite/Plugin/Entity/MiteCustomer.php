@@ -17,13 +17,14 @@ class MiteCustomer extends MiteEntityBase implements MiteCustomerInterface {
   public function __construct(array $values = array(), $entity_type = NULL) {
     parent::__construct($values, $entity_type);
 
-    $rates=$this->hourly_rates_per_service;
-    
-    if(isset($rates['hourly-rate-per-service'])){
-      $this->hourly_rates_per_service=json_encode($rates['hourly-rate-per-service']);
-    }
-    else{
-      $this->hourly_rates_per_service="";
+    if(isset($this->hourly_rates_per_service)){
+      $rates=$this->hourly_rates_per_service;
+      if(isset($rates['hourly-rate-per-service'])){
+        $this->hourly_rates_per_service=json_encode($rates['hourly-rate-per-service']);
+      }
+      else{
+        $this->hourly_rates_per_service="";
+      }
     }
   }
 

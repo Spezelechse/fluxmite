@@ -8,7 +8,6 @@
 namespace Drupal\fluxmite\Plugin\Rules\Action;
 
 use Drupal\fluxmite\Plugin\Service\MiteAccountInterface;
-use Drupal\fluxmite\Plugin\Entity\MiteCustomer;
 use Drupal\fluxmite\Rules\RulesPluginHandlerBase;
 
 /**
@@ -38,12 +37,6 @@ class updateRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
           'wrapped' => FALSE,
           'required' => TRUE,
         ),
-        /*'update_local' => array(
-          'type' => 'boolean',
-          'label' => t('Update local entity'),
-          'required' => FALSE,
-          'description' => t('Only needed when id properties are used (e.g. service-id, project-id, ...).'),
-          )*/
       )
     );
   }
@@ -57,13 +50,6 @@ class updateRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
     
     $controller = entity_get_controller($remote_entity->entityType());
     
-    $remote = $controller->updateRemote($local_entity->id, $local_entity->entityType(), $account, $remote_entity);
-    
-    //local update
-    if(isset($remote)){
-      $res=db_query("SELECT event FROM {rules_trigger} WHERE event LIKE :type", array(':type'=>$remote_entity->entityType().'_event--%'));
-      $res=$res->fetch();
-      rules_invoke_event($res->event, $account, $remote, 'update', $local_entity->id);
-    }
+    $updated = $controller->updateRemote($local_entity->id, $local_entity->entityType(), $account, $remote_entity);
   }
 }

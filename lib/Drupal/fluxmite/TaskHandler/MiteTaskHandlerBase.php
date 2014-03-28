@@ -146,20 +146,21 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
       //check all data_sets
       if(isset($data_sets[$mite_type][0])){//multiple
         foreach($data_sets[$mite_type] as $data_set){
-          $this->checkSingleResponseSet($data_set, $create, $delete, $delete_local_ids, $update, $update_local_ids);
+          $this->checkSingleResponseSet($data_set, $create, $update, $update_local_ids);
         }
       }
       else{//single
-        $this->checkSingleResponseSet($data_sets[$mite_type], $create, $delete, $delete_local_ids, $update, $update_local_ids);
+        $this->checkSingleResponseSet($data_sets[$mite_type], $create, $update, $update_local_ids);
       }
 
       //get deleted id's
-      $res=db_query("SELECT id FROM {fluxmite} WHERE touched_last <= :last_check AND remote_type = :type",
+      $res=db_query("SELECT id, mite_id, touched_last FROM {fluxmite} WHERE touched_last <= :last_check AND remote_type = :type",
                     array(':last_check'=>$last_check, ':type'=>'fluxmite_'.$type));
 
       foreach($res as $data){
+        print_r('delete local: '.$data->touched_last.'<br>');
         array_push($delete_local_ids, $data->id);
-        array_push($delete, array());
+        array_push($delete, array('id'=>$data->mite_id));
         db_delete('fluxmite')->condition('id',$data->id, '=')->condition('remote_type','fluxmite_'.$type,'=')->execute();
       }
 
@@ -172,7 +173,7 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
 /**
  * checks which event is needed for the given mite data_set
  */
-  private function checkSingleResponseSet($data_set, &$create, &$delete, &$delete_local_ids, &$update, &$update_local_ids){
+  private function checkSingleResponseSet($data_set, &$create, &$update, &$update_local_ids){
     $res=db_query("SELECT updated_at, id FROM {fluxmite} WHERE mite_id = :id", array(':id'=>$data_set['id']));
     $res=$res->fetchAssoc();
 
@@ -206,7 +207,6 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
     MiteTaskQueue::cleanQueue($type);
     $queue=MiteTaskQueue::getTasks($type);
 
-    echo "<br>";
     foreach ($queue as $task) {
       MiteTaskQueue::resetTaskFailed($task->id);
 
@@ -218,7 +218,6 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
                                           null,
                                           $task->request,
                                           $task->remote_type);
-
         if(isset($remote)){
           rules_invoke_event($this->getEvent(), $this->getAccount(), $remote, 'update', $task->local_id);
         }

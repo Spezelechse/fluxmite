@@ -24,6 +24,18 @@ class MiteEntityBase extends RemoteEntity implements MiteEntityBaseInterface {
 	   		$values=array_combine($keys, $values);
 	   		$id=explode(':', $values['id']);
 	   		$this->mite_id=$id[2];
+
+	   		if(isset($values['billable'])){
+	   			$values['billable']=($values['billable']=='false'?0:1);
+	   		}
+
+	   		if(isset($values['locked'])){
+	   			$values['locked']=($values['locked']=='false'?0:1);
+	   		}
+
+	   		if(isset($values['archived'])){
+	   			$values['archived']=($values['archived']=='false'?0:1);
+	   		}
    		}
 
    		parent::__construct($values, $entity_type);

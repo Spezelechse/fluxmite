@@ -49,14 +49,13 @@ class createRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
     print_r("create remote<br>");
     $controller = entity_get_controller($remote_entity->entityType());
     
-    $remote = $controller->createRemote($local_entity->id, $local_entity->entityType(), $account, $remote_entity);
+    $created = $controller->createRemote($local_entity->id, $local_entity->entityType(), $account, $remote_entity);
 
-    //update local
-    if(isset($remote)){
+     //local update
+    if(isset($created)){
       $res=db_query("SELECT event FROM {rules_trigger} WHERE event LIKE :type", array(':type'=>$remote_entity->entityType().'_event--%'));
       $res=$res->fetch();
-
-      rules_invoke_event($res->event, $account, $remote, 'update',$local_entity->id);
+      rules_invoke_event($res->event, $account, $created, 'update', $local_entity->id);
     }
   }
 }

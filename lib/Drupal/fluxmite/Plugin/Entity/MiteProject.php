@@ -16,13 +16,14 @@ class MiteProject extends MiteEntityBase implements MiteProjectInterface {
   public function __construct(array $values = array(), $entity_type = NULL) {
     parent::__construct($values, $entity_type);
 
-    $rates=$this->hourly_rates_per_service;
-
-    if(isset($rates['hourly-rate-per-service'])){
-      $this->hourly_rates_per_service=json_encode($rates['hourly-rate-per-service']);
-    }
-    else{
-      $this->hourly_rates_per_service="";
+    if(isset($this->hourly_rates_per_service)){
+      $rates=$this->hourly_rates_per_service;
+      if(isset($rates['hourly-rate-per-service'])){
+        $this->hourly_rates_per_service=json_encode($rates['hourly-rate-per-service']);
+      }
+      else{
+        $this->hourly_rates_per_service="";
+      }
     }
   }
 
@@ -119,7 +120,7 @@ class MiteProject extends MiteEntityBase implements MiteProjectInterface {
     $info['hourly_rates_per_service'] = array(
       'label' => t('Hourly-rates-per-service'),
       'description' => t("Project hourly-rates-per-service."),
-      'type' => 'array',
+      'type' => 'text',
       'setter callback' => 'entity_property_verbatim_set',
     );
     $info['created_at'] = array(
