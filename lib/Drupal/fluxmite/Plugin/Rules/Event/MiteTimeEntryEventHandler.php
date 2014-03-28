@@ -28,7 +28,9 @@ class MiteTimeEntryEventHandler extends MiteEventHandlerBase {
         ),
         'change_type' => array(
           'type' => 'text',
+          'options list' => 'change_type_get_options',
           'label' => t('Change type'),
+          'restiction' => 'input',
         ),
         'local_entity_id' => array(
           'type' => 'integer',
