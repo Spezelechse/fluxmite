@@ -16,8 +16,7 @@ class MiteMyselfTaskHandler extends MiteTaskHandlerBase {
    * {@inheritdoc}
    */
   public function runTask() {
-  	print_r("myself");
-  	echo "<br>";
+  	print_r("<br>myself<br>");
   	$this->processQueue();
 	$this->checkAndInvoke();
   }

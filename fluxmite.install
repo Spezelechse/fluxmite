@@ -83,8 +83,8 @@
           'length' => '50',
           'not null' => TRUE,
           ),
-        'task_type' => array(
-          'description' => 'Type of the task (create, delete, update)',
+        'callback' => array(
+          'description' => 'Type of the task (e.g. post,put,delete)',
           'type' => 'varchar',
           'length' => '20',
           'not null' => TRUE,

@@ -17,8 +17,7 @@ class MiteTimeEntryTaskHandler extends MiteTaskHandlerBase {
    */
   public function runTask() {
     if($this->checkRequirements()){
-    	print_r("time entry");
-    	echo "<br>";
+    	print_r("<br>time entry<br>");
     	$this->processQueue();
   	  $this->checkAndInvoke();
     }

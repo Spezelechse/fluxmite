@@ -39,11 +39,12 @@ class deleteRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
    * Executes the action.
    */
   public function execute(MiteAccountInterface $account, $local_entity) {
-    $res=db_query("SELECT mite_id, remote_type FROM {fluxmite} WHERE id = :id AND type = :type", 
-            array(  ':id'=>$local_entity->id, 
-                    ':type'=>$local_entity->entityType()));
-
-    $res=$res->fetchAssoc();
+    $res=db_select('fluxmite','fm')
+            ->fields('fm',array('mite_id','remote_type'))
+            ->condition('fm.id',$local_entity->id,'=')
+            ->condition('fm.type',$local_entity->entityType(),'=')
+            ->execute()
+            ->fetchAssoc();
 
     if($res){
       $controller = entity_get_controller($res['remote_type']);

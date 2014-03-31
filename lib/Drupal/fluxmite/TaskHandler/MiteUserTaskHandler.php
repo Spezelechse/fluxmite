@@ -16,8 +16,7 @@ class MiteUserTaskHandler extends MiteTaskHandlerBase {
    * {@inheritdoc}
    */
   public function runTask() {
-   	print_r("user");
-  	echo "<br>";
+   	print_r("<br>user<br>");
   	$this->processQueue();
 	$this->checkAndInvoke();
   }

@@ -74,7 +74,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
         if($e->getResponse()->getStatusCode()==404){
           $this->handle404( '[404] Host "'.$account->client()->getBaseUrl().'" not found ('.$operation.')',
                             array(
-                              'task_type'=>'post',
+                              'callback'=>'post',
                               'task_priority'=>2,
                               'local_id'=>$local_entity_id,
                               'local_type'=>$local_entity_type,
@@ -198,7 +198,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
       if($e->getResponse()->getStatusCode()==404){
         $continue=$this->handle404( '[404] Host "'.$account->client()->getBaseUrl().'" not found ('.$operation.')',
                           array(
-                            'task_type'=>'delete',
+                            'callback'=>'delete',
                             'task_priority'=>0,
                             'local_id'=>$local_entity_id,
                             'local_type'=>$local_entity_type,
@@ -259,7 +259,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
       if($e->getResponse()->getStatusCode()==404){
         $this->handle404( '[404] Host "'.$account->client()->getBaseUrl().'" not found ('.$operation.')', 
                           array(
-                            'task_type'=>'put',
+                            'callback'=>'put',
                             'task_priority'=>1,
                             'local_id'=>$local_entity_id,
                             'local_type'=>$local_entity_type,

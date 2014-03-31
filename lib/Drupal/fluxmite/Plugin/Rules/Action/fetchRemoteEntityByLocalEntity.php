@@ -44,11 +44,13 @@ class fetchRemoteEntityByLocalEntity extends RulesPluginHandlerBase implements \
    * Executes the action.
    */
   public function execute($local_entity) {
-    $res=db_query("SELECT remote_id, remote_type FROM {fluxmite} WHERE id = :id AND type = :type", 
-            array(  ':id'=>$local_entity->id, 
-                    ':type'=>$local_entity->entityType()));
+    $res=db_select('fluxmite','fm')
+            ->fields('fm',array('remote_id','remote_type'))
+            ->condition('fm.id',$local_entity->id,'=')
+            ->condition('fm.type',$local_entity->entityType(),'=')
+            ->execute()
+            ->fetchAssoc();
 
-    $res=$res->fetchAssoc();
 
     if($res){
       if(!$remote_entity=entity_load_single($res['remote_type'], $res['remote_id'])){

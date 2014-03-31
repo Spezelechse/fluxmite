@@ -18,8 +18,7 @@ class MiteProjectTaskHandler extends MiteTaskHandlerBase {
    */
   public function runTask() {
   	if($this->checkRequirements()){
-  		print_r("project");
-  		echo "<br>";
+  		print_r("<br>project<br>");
   		$this->processQueue();
 		$this->checkAndInvoke();
 	}

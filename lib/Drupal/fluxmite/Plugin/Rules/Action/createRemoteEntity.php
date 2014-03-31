@@ -53,8 +53,12 @@ class createRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
 
      //local update
     if(isset($created)){
-      $res=db_query("SELECT event FROM {rules_trigger} WHERE event LIKE :type", array(':type'=>$remote_entity->entityType().'_event--%'));
-      $res=$res->fetch();
+      $res=db_select('rules_trigger','rs')
+            ->fields('rs',array('event'))
+            ->condition('rs.event',$remote_entity->entityType().'_event--%','LIKE')
+            ->execute()
+            ->fetch();
+
       rules_invoke_event($res->event, $account, $created, 'update', $local_entity->id);
     }
   }

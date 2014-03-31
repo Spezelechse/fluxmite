@@ -1,5 +1,5 @@
 <?php
-
+use Drupal\fluxmite\MiteQueuedTasks;
 /**
  * @file
  * Main module file.
@@ -50,7 +50,8 @@ function fluxmite_fluxservice_plugin_directory() {
  * 
  */
 function task_type_get_options(){
-	return array('post'=>'create', 'put'=>'update', 'delete'=>'delete');
+	//return array('post'=>'create', 'put'=>'update', 'delete'=>'delete');
+	return MiteQueuedTasks::getOptions();
 }
 
 /**

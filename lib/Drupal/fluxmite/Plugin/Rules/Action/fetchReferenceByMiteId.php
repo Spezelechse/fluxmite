@@ -55,11 +55,12 @@ class fetchReferenceByMiteId extends RulesPluginHandlerBase implements \RulesAct
    * Executes the action.
    */
   public function execute($mite_id, $local_type,$remote_entity) {
-    $res=db_query("SELECT id,type, remote_type, mite_id FROM {fluxmite} WHERE mite_id = :id AND type =  :type", 
-                  array(  ':id'=>$mite_id, 
-                          ':type'=>$local_type));
-
-    $res=$res->fetchAssoc();
+    $res=db_select('fluxmite','fm')
+          ->fields('fm',array('id','type','remote_type','mite_id'))
+          ->condition('fm.mite_id',$mite_id,'=')
+          ->condition('fm.type',$local_type,'=')
+          ->execute()
+          ->fetchAssoc();
 
     if($res){
       $reference=entity_load_single($res['type'], $res['id']);  

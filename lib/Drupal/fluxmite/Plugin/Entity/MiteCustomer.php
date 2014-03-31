@@ -17,8 +17,14 @@ class MiteCustomer extends MiteEntityBase implements MiteCustomerInterface {
   public function __construct(array $values = array(), $entity_type = NULL) {
     parent::__construct($values, $entity_type);
 
+    //case: active_hourly_rate = default
+    if(gettype($this->active_hourly_rate)=='array'){
+      $this->active_hourly_rate='nil';
+    }
+
     if(isset($this->hourly_rates_per_service)){
       $rates=$this->hourly_rates_per_service;
+      //serialize hourly_rates_per_service
       if(isset($rates['hourly-rate-per-service'])){
         $this->hourly_rates_per_service=json_encode($rates['hourly-rate-per-service']);
       }

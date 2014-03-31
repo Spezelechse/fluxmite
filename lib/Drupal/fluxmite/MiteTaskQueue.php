@@ -4,15 +4,27 @@
  */
  namespace Drupal\fluxmite;
 
- class MiteTaskQueue {
- 	public function addTask($data){
- 		$res=db_query('SELECT * FROM {fluxmite_queue} WHERE local_id=:local_id AND local_type=:local_type AND task_type=:task_type', 
- 				array(
- 					':local_id'=>$data['local_id'],
- 					':local_type'=>$data['local_type'],
- 					':task_type'=>$data['task_type']));
+ use Drupal\fluxmite\MiteQueuedTasks;
 
- 		$res=$res->fetch();
+ class MiteTaskQueue {
+ 	private $entity_type;
+ 	private $account;
+ 	private $tasks;
+
+ 	public function __construct($type, $acc){
+ 		$this->entity_type=$type;
+ 		$this->account=$acc;
+ 		$this->tasks=new MiteQueuedTasks();
+ 	}
+
+ 	public function addTask($data){
+		$res=db_select('fluxmite_queue','fq')
+				->fields('fq')
+				->condition('fq.local_id',$data['local_id'],'=')
+				->condition('fq.local_type',$data['local_type'],'=')
+				->condition('fq.callback',$data['callback'],'=')
+				->execute()
+				->fetch();
 
  		if(isset($res->id)){
  			db_update('fluxmite_queue')
@@ -34,17 +46,20 @@
  		}
  	}
 
- 	public function getTasks($entity_type){
- 		$res=db_query('SELECT * FROM {fluxmite_queue} WHERE remote_type=:type ORDER BY task_priority DESC',array(':type'=>$entity_type));
-
- 		$res=$res->fetchAll();
+ 	public function getTasks(){
+ 		$res=db_select('fluxmite_queue','fq')
+ 				->fields('fq')
+ 				->condition('fq.remote_type',$this->entity_type,'=')
+ 				->orderBy('fq.task_priority','DESC')
+ 				->execute()
+ 				->fetchAll();
 
  		return $res;
  	}
 
- 	public function cleanQueue($entity_type){
+ 	public function clean(){
  		db_delete('fluxmite_queue')
- 			->condition('remote_type',$entity_type,'=')
+ 			->condition('remote_type',$this->entity_type,'=')
  			->condition('failed',0,'=')
  			->execute();
  	}
@@ -54,6 +69,26 @@
  			->fields(array('failed'=>0))
  			->condition('id',$id,'=')
  			->execute();
+ 	}
+
+ 	public function process(){
+	    $this->clean();
+	    $queue=$this->getTasks();
+
+	    foreach ($queue as $task) {
+	      $this->resetTaskFailed($task->id);
+
+	      $callback=$task->callback;
+
+	      if(method_exists($this->tasks,$callback)){
+	      	$this->tasks->$callback($task,$this->account);
+	      	echo $task->callback.": ".$task->local_type."(".$task->local_id.")<br>";
+	      }
+	      else{
+	      	throw new \Exception('Unkown task callback: '.$callback);
+	      }
+	    }
+	    echo "<br>";
  	}
  }
  ?>

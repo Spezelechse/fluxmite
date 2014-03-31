@@ -15,7 +15,6 @@ use Drupal\fluxmite\MiteTaskQueue;
  * Base class for Mite task handlers that dispatch Rules events.
  */
 class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
-
   /**
    * Gets the configured event name to dispatch.
    */
@@ -138,10 +137,13 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
       $delete=array();
       $delete_local_ids=array();
 
-      //get time_stamp of the last check
-      $last_check=db_query("SELECT MAX(touched_last) as time FROM {fluxmite} WHERE remote_type = :type", array(':type'=>'fluxmite_'.$type));
-      $last_check=$last_check->fetch();
-      $last_check=$last_check->time;
+      $last_check=db_select('fluxmite','fm')
+                    ->fields('fm',array('touched_last'))
+                    ->condition('fm.remote_type','fluxmite_'.$type,'=')
+                    ->orderBy('fm.touched_last','DESC')
+                    ->execute()
+                    ->fetch()
+                    ->touched_last;
 
       //check all data_sets
       if(isset($data_sets[$mite_type][0])){//multiple
@@ -154,14 +156,20 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
       }
 
       //get deleted id's
-      $res=db_query("SELECT id, mite_id, touched_last FROM {fluxmite} WHERE touched_last <= :last_check AND remote_type = :type",
-                    array(':last_check'=>$last_check, ':type'=>'fluxmite_'.$type));
+      $res=db_select('fluxmite','fm')
+              ->fields('fm',array('id','mite_id','touched_last'))
+              ->condition('fm.touched_last',$last_check,'<=')
+              ->condition('fm.remote_type','fluxmite_'.$type,'=')
+              ->execute();
 
       foreach($res as $data){
         print_r('delete local: '.$data->touched_last.'<br>');
         array_push($delete_local_ids, $data->id);
         array_push($delete, array('id'=>$data->mite_id));
-        db_delete('fluxmite')->condition('id',$data->id, '=')->condition('remote_type','fluxmite_'.$type,'=')->execute();
+        db_delete('fluxmite')
+          ->condition('id',$data->id, '=')
+          ->condition('remote_type','fluxmite_'.$type,'=')
+          ->execute();
       }
 
       $this->invokeEvent('fluxmite_'.$type, $create, $account, 'create');
@@ -174,8 +182,12 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
  * checks which event is needed for the given mite data_set
  */
   private function checkSingleResponseSet($data_set, &$create, &$update, &$update_local_ids){
-    $res=db_query("SELECT updated_at, id FROM {fluxmite} WHERE mite_id = :id", array(':id'=>$data_set['id']));
-    $res=$res->fetchAssoc();
+    $res=db_select('fluxmite','fm')
+          ->fields('fm',array('updated_at','id'))
+          ->condition('mite_id',$data_set['id'])
+          ->execute()
+          ->fetchAssoc();
+
 
     if($res){
       //check for updates
@@ -184,7 +196,10 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
         array_push($update_local_ids, $res['id']);
       }
 
-      db_query("UPDATE {fluxmite} SET touched_last=".time()." WHERE id=:id", array(':id'=>$res['id']));
+      db_update('fluxmite')
+        ->fields(array('touched_last'=>time()))
+        ->condition('id',$res['id'],'=')
+        ->execute();
     }
     else{
       array_push($create, $data_set);
@@ -204,42 +219,8 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
       $type.='_'.$type_split[2];
     }
 
-    MiteTaskQueue::cleanQueue($type);
-    $queue=MiteTaskQueue::getTasks($type);
+    $queue=new MiteTaskQueue($type,$this->getAccount());
 
-    foreach ($queue as $task) {
-      MiteTaskQueue::resetTaskFailed($task->id);
-
-      if($task->task_type=='post'){
-        $controller = entity_get_controller($task->remote_type);
-        $remote=$controller->createRemote($task->local_id,
-                                          $task->local_type,
-                                          $this->getAccount(),
-                                          null,
-                                          $task->request,
-                                          $task->remote_type);
-        if(isset($remote)){
-          rules_invoke_event($this->getEvent(), $this->getAccount(), $remote, 'update', $task->local_id);
-        }
-      }
-      else if($task->task_type=='put'){
-        $entity = entity_load_single($task->local_type, $task->local_id);
-        $entity = entity_metadata_wrapper($task->local_type, $entity);
-        $entity->save();
-      }
-      else if($task->task_type=='delete'){
-        $controller = entity_get_controller($task->remote_type);
-        $controller->deleteRemote($task->local_id,
-                                  $task->local_type,
-                                  $this->getAccount(),
-                                  $task->remote_type,
-                                  $task->mite_id);
-      }
-      else{
-        //TODO: throw exception unkown task
-      }
-      echo $task->task_type.": ".$task->local_type."(".$task->local_id.")<br>";
-    }
-    echo "<br>";
+    $queue->process();
   }
 }
