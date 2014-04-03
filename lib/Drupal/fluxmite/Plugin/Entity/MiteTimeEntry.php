@@ -14,10 +14,14 @@ use Drupal\fluxservice\Entity\RemoteEntity;
  */
 class MiteTimeEntry extends MiteEntityBase implements MiteTimeEntryInterface {
    public function __construct(array $values = array(), $entity_type = NULL) {
+    
     parent::__construct($values, $entity_type);
     
     if(isset($this->date_at)){
       $this->date_at=strtotime($this->date_at);
+    }
+    if(isset($this->revenue)){
+      $this->revenue=(float)$this->revenue;
     }
   }
   /**

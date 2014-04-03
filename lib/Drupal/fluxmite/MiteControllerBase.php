@@ -116,7 +116,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
       
     //generate a xml element for every set entity property
     foreach ($properties as $key => $value) {
-      if($key=='id'||$key=='updated_at'||$key=='created_at'){
+      if($key=='id'||$key=='updated_at'||$key=='created_at'||$key=='hourly_rates_per_service'||$key=='mite_id'){
         continue;
       }
 
@@ -141,7 +141,8 @@ abstract class MiteControllerBase extends RemoteEntityController {
             $value=date('Y-m-d\TH:m:sP');
           }
         }
-        else if($key=='hourly_rates_per_service'){
+        else if($key=='hourly_rates_per_service_json'){
+          $key='hourly_rates_per_service';
           if(isset($value)&&$value!=""){
             //build array from json
             $buffer=json_decode($value);
@@ -172,7 +173,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
     $req.="<force>true</force>";
 
     $req="<".$type.">".$req."</".$type.">";
-    dpm($req);
+    print_r($req."<br>");
     return $req;
   }
 

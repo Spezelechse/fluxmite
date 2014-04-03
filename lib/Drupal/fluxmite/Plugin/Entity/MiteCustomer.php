@@ -26,10 +26,13 @@ class MiteCustomer extends MiteEntityBase implements MiteCustomerInterface {
       $rates=$this->hourly_rates_per_service;
       //serialize hourly_rates_per_service
       if(isset($rates['hourly-rate-per-service'])){
-        $this->hourly_rates_per_service=json_encode($rates['hourly-rate-per-service']);
+        $this->hourly_rates_per_service=json_decode(str_replace('-', '_', json_encode($rates['hourly-rate-per-service'])),1);
+        if(!isset($this->hourly_rates_per_service[0])){
+          $this->hourly_rates_per_service=array($this->hourly_rates_per_service);
+        }
       }
       else{
-        $this->hourly_rates_per_service="";
+        $this->hourly_rates_per_service=array();
       }
     }
   }
@@ -104,6 +107,26 @@ class MiteCustomer extends MiteEntityBase implements MiteCustomerInterface {
     $info['hourly_rates_per_service'] = array(
       'label' => t('Hourly-rates-per-service'),
       'description' => t("Customer hourly-rates-per-service."),
+      'type' => 'list<struct>',
+      'setter callback' => 'entity_property_verbatim_set',
+      'property info' => array(
+        'service_id' => array(
+          'label' => t('Mite service id'),
+          'description' => t('Mite service id'),
+          'type' => 'integer',
+          'setter callback' => 'entity_property_verbatim_set',
+        ),
+        'hourly_rate' => array(
+          'label' => t('Hourly-rate'),
+          'description' => t('Hourly-rate for service'),
+          'type' => 'integer',
+          'setter callback' => 'entity_property_verbatim_set',
+        )        
+      )
+    );
+    $info['hourly_rates_per_service_json'] = array(
+      'label' => t('Hourly-rates-per-service json'),
+      'description' => t("Hourly rates per service json string."),
       'type' => 'text',
       'setter callback' => 'entity_property_verbatim_set',
     );

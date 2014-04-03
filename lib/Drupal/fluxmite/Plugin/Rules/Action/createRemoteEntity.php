@@ -37,6 +37,11 @@ class createRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
           'wrapped' => FALSE,
           'required' => TRUE,
         ),
+      ),
+      'provides' => array(
+        'created_entity' => array(
+          'type'=>'entity',
+          'label' => t('Created entity')),
       )
     );
   }
@@ -51,15 +56,17 @@ class createRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
     
     $created = $controller->createRemote($local_entity->id, $local_entity->entityType(), $account, $remote_entity);
 
+
+    return array('created_entity'=>entity_metadata_wrapper($remote_entity->entityType(),$created));
      //local update
-    if(isset($created)){
+    /*if(isset($created)){
       $res=db_select('rules_trigger','rs')
             ->fields('rs',array('event'))
             ->condition('rs.event',$remote_entity->entityType().'_event--%','LIKE')
             ->execute()
             ->fetch();
 
-      rules_invoke_event($res->event, $account, $created, 'update', $local_entity->id);
-    }
+      //rules_invoke_event($res->event, $account, $created, 'update', $local_entity->id);
+    }*/
   }
 }
