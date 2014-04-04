@@ -36,6 +36,30 @@ class MiteEntityBase extends RemoteEntity implements MiteEntityBaseInterface {
 	   		if(isset($values['archived'])){
 	   			$values['archived']=($values['archived']=='false'?0:1);
 	   		}
+
+	   		if(isset($values['note'])&&gettype($values['note'])=='array'){
+	   			$values['note']="";
+	   		}
+
+	   		if(isset($values['hourly_rate'])&&gettype($values['hourly_rate'])=='array'){
+	   			$values['hourly_rate']=0;
+	   		}
+
+	   		if(isset($values['active_hourly_rate'])&&gettype($values['active_hourly_rate'])=='array'){
+	   			$values['active_hourly_rate']="";
+	   		}
+	   		
+	   		if(isset($values['customer_id'])&&gettype($values['customer_id'])=='array'){
+	   			$values['customer_id']=0;
+	   		}
+	   		
+	   		if(isset($values['project_id'])&&gettype($values['project_id'])=='array'){
+	   			$values['project_id']=0;
+	   		}
+
+	   		if(isset($values['service_id'])&&gettype($values['service_id'])=='array'){
+	   			$values['service_id']=0;
+	   		}
    		}
 
    		parent::__construct($values, $entity_type);

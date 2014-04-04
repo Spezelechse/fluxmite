@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains updateHourlyRateOfService.
+ * Contains updateLocalHourlyRatePerService.
  */
 
 namespace Drupal\fluxmite\Plugin\Rules\Action;
@@ -12,9 +12,9 @@ use Drupal\fluxmite\Plugin\Entity\MiteCustomer;
 use Drupal\fluxmite\Rules\RulesPluginHandlerBase;
 
 /**
- * update remote entities.
+ * update local hourly rate per service field collection.
  */
-class updateHourlyRateOfService extends RulesPluginHandlerBase implements \RulesActionHandlerInterface {
+class updateLocalHourlyRatePerService extends RulesPluginHandlerBase implements \RulesActionHandlerInterface {
 
   /**
    * Defines the action.
@@ -22,8 +22,8 @@ class updateHourlyRateOfService extends RulesPluginHandlerBase implements \Rules
   public static function getInfo() {
 
     return static::getInfoDefaults() + array(
-      'name' => 'fluxmite_update_hourly_rate_of_service',
-      'label' => t('Update hourly rate of service'),
+      'name' => 'fluxmite_update_local_hourly_rate_per_service',
+      'label' => t('Update local hourly rate per service'),
       'parameter' => array(
         'host_entity' => array(
           'type' => 'entity',
@@ -33,7 +33,7 @@ class updateHourlyRateOfService extends RulesPluginHandlerBase implements \Rules
         ),
         'collection' => array(
           'type' => 'list<field_collection_item>',
-          'label' => t('Collection'),
+          'label' => t('Field collection'),
           'required' => TRUE,
         ),
         'rate_field' => array(

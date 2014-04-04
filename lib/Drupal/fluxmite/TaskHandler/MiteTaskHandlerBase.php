@@ -15,11 +15,43 @@ use Drupal\fluxmite\MiteTaskQueue;
  * Base class for Mite task handlers that dispatch Rules events.
  */
 class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
+
+  public function __construct(array $task) {
+    parent::__construct($task);
+    
+    //extract the entity type from the event type
+    $type_split=explode("_",$this->task['identifier']);
+    $type=$type_split[1];
+    $mite_type=$type;
+
+    //workaround for time_entries
+    if($type=='time'){
+      $type.='_'.$type_split[2];
+      $mite_type.='-'.$type_split[2];
+    }
+
+    $this->task['entity_type']=$type;
+    $this->task['mite_type']=$mite_type;
+  }
   /**
    * Gets the configured event name to dispatch.
    */
   public function getEvent() {
     return $this->task['identifier'];
+  }
+
+  /**
+   * 
+   */
+  public function getEntityType(){
+    return $this->task['entity_type'];
+  }
+
+  /**
+   * 
+   */
+  public function getMiteType(){
+    return $this->task['mite_type'];
   }
 
   /**
@@ -54,6 +86,101 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
     catch(\RulesEvaluationException $e) {
       rules_log($e->msg, $e->args, $e->severity);
     }
+  }
+
+
+  /**
+   *
+   */
+  public function checkRequirements(){
+    if($this->checkDataExists()){
+      //check required is handled
+      foreach ($this->needed_types as $type) {
+        $sched=db_select('rules_scheduler','rs')
+                ->fields('rs',array('date'))
+                ->condition('rs.identifier','fluxmite_'.$type.'%','LIKE')
+                ->execute()
+                ->fetch();
+        if(!$sched){
+          watchdog('fluxmite', "Missing taskhandler for ".$type."  (@".$this->getEntityType().")");
+          return false;
+        }else{
+          //check is handled before
+        $res=db_select('rules_scheduler','rs')
+            ->fields('rs',array('tid'))
+            ->condition('rs.date',$sched->date,'>')
+            ->condition('rs.identifier','fluxmite_'.$this->getEntityType().'%','LIKE')
+            ->execute()
+            ->fetch();
+        if(!$res){
+          watchdog('fluxmite', "Notice: Wrong taskhandler order will be changed now (@".$this->getEntityType().")");
+          return false;
+        }
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+ /**
+  * 
+  */
+  public function checkDataExists(){
+    foreach ($this->needed_types as $type) {
+      $res=db_select('fluxmite','fm')
+          ->fields('fm')
+          ->condition('fm.remote_type','fluxmite_'.$type)
+          ->execute();
+
+      if($res->rowCount()<=0){
+        watchdog('fluxmite', "Missing database entries for ".$type." (@".$this->getEntityType().")");
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * 
+   */
+  public function afterTaskComplete(){
+    $service = $this->getAccount()->getService();
+
+    $data=$this->getScheduleData();
+
+    if($data){
+      db_update('rules_scheduler')
+        ->condition('tid', $this->task['tid'])
+        ->fields(array('date' => $data->date + 1 + $service->getPollingInterval()))
+        ->execute();
+    }
+    else{
+      db_update('rules_scheduler')
+        ->condition('tid', $this->task['tid'])
+        ->fields(array('date' => $this->task['date'] + $service->getPollingInterval()))
+        ->execute();
+    }
+  }
+
+ /**
+  * 
+  */
+  public function getScheduleData(){
+    $or=db_or();
+
+    foreach ($this->needed_types as $type) {
+      $or->condition('rs.identifier','fluxmite_'.$type.'%','LIKE');
+    }
+
+    $data=db_select('rules_scheduler','rs')
+            ->fields('rs',array('date'))
+            ->condition($or)
+            ->orderBy('rs.date','DESC')
+            ->execute()
+            ->fetch();
+
+    return $data;
   }
 
 /**
@@ -142,8 +269,14 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
                     ->condition('fm.remote_type','fluxmite_'.$type,'=')
                     ->orderBy('fm.touched_last','DESC')
                     ->execute()
-                    ->fetch()
-                    ->touched_last;
+                    ->fetch();
+    
+      if($last_check){
+        $last_check=$last_check->touched_last;
+      }
+      else{
+        $last_check=time();
+      }
 
       //check all data_sets
       if(isset($data_sets[$mite_type][0])){//multiple

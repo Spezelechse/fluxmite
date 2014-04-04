@@ -173,7 +173,6 @@ abstract class MiteControllerBase extends RemoteEntityController {
     $req.="<force>true</force>";
 
     $req="<".$type.">".$req."</".$type.">";
-    print_r($req."<br>");
     return $req;
   }
 
