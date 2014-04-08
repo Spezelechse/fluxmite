@@ -113,7 +113,7 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
             ->execute()
             ->fetch();
         if(!$res){
-          watchdog('fluxmite', "Notice: Wrong taskhandler order will be changed now (@".$this->getEntityType().")");
+          watchdog('fluxmite', "Notice: Wrong taskhandler order, will be changed now (@".$this->getEntityType().")");
           return false;
         }
         }

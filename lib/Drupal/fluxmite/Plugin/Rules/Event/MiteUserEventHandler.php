@@ -17,7 +17,7 @@ class MiteUserEventHandler extends MiteEventHandlerBase {
    */
   public static function getInfo() {
     return static::getInfoDefaults() + array(
-      'name' => 'fluxmite_user_posted',
+      'name' => 'fluxmite_user_event',
       'label' => t('Something happend to a user'),
       'variables' => array(
         'account' => static::getServiceVariableInfo(),
