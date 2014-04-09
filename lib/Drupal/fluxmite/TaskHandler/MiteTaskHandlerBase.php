@@ -93,6 +93,12 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
    *
    */
   public function checkRequirements(){
+    $service = $this->getAccount()->getService();
+
+    if(!$service->remoteDependenciesAreUsed()){
+      return true;
+    }
+
     if($this->checkDataExists()){
       //check required is handled
       foreach ($this->needed_types as $type) {

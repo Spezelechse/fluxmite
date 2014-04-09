@@ -35,6 +35,7 @@ class MiteService extends Service implements MiteServiceInterface {
     return parent::getDefaultSettings() + array(
       'polling_interval' => 900,
       'subdomain' => '',
+      'use_remote_dependencies'=> 1,
     );
   }
 
@@ -74,7 +75,13 @@ class MiteService extends Service implements MiteServiceInterface {
       // Avoid the data being nested below 'rules' or falling out of 'data'.
       '#parents' => array('data'),
     );
-
+    $form['rules']['use_remote_dependencies'] = array(
+      '#type' => 'select',
+      '#title' => t('Use remote entity dependencies'),
+      '#default_value' => $this->remoteDependenciesAreUsed(),
+      '#options' => array(0 => t('no'), 1=>t('yes')),
+      '#description' => t('Some remote entities depend on others. If dependencies are used the taskhandler will not run until the needed entities are handled.'),
+    );
     $form['rules']['polling_interval'] = array(
       '#type' => 'select',
       '#title' => t('Polling interval'),
@@ -107,6 +114,13 @@ class MiteService extends Service implements MiteServiceInterface {
 
   public function getSubdomain(){
     return $this->data->get('subdomain');
+  }
+
+  /**
+   * 
+   */
+  public function remoteDependenciesAreUsed(){
+    return $this->data->get('use_remote_dependencies');
   }
 
   /**
