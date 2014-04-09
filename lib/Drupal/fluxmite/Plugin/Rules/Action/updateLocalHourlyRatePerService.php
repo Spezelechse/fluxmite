@@ -60,7 +60,7 @@ class updateLocalHourlyRatePerService extends RulesPluginHandlerBase implements 
    * Executes the action.
    */
   public function execute($host, $collection, $rate_field, $service_field, $remote_entity, $settings, $state) {
-    print_r("<br>update field collection<br>");
+    //print_r("<br>update field collection<br>");
     $service_field='field_'.$service_field;
     $rate_field='field_'.$rate_field;
     $host_entity;

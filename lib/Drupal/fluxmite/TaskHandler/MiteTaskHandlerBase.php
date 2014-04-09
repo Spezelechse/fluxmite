@@ -302,7 +302,7 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBase {
               ->execute();
 
       foreach($res as $data){
-        print_r('delete local: '.$data->touched_last.'<br>');
+        //print_r('delete local: '.$data->touched_last.'<br>');
         array_push($delete_local_ids, $data->id);
         array_push($delete, array('id'=>$data->mite_id));
         db_delete('fluxmite')

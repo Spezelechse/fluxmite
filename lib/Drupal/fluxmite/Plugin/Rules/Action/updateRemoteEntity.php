@@ -50,9 +50,6 @@ class updateRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
    * Executes the action.
    */
   public function execute(MiteAccountInterface $account, $remote_entity, $local_entity) {
-    dpm("update remote");
-    print_r("update remote ".$remote_entity->mite_id."<br>");
-    
     $controller = entity_get_controller($remote_entity->entityType());
     
     $updated = $controller->updateRemote($local_entity->id, $local_entity->entityType(), $account, $remote_entity);

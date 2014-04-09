@@ -61,7 +61,7 @@ class setRemoteHourlyRatePerService extends RulesPluginHandlerBase implements \R
    * Executes the action.
    */
   public function execute($collection, $rate_field, $service_id_field, $local_service_type, $remote_entity) {
-    print_r("<br>set remote hourly rate of service<br>");
+    //print_r("<br>set remote hourly rate of service<br>");
     $service_id_field='field_'.$service_id_field;
     $rate_field='field_'.$rate_field;    
     $json="";

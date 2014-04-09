@@ -60,7 +60,7 @@ class setLocalHourlyRatePerService extends RulesPluginHandlerBase implements \Ru
    * Executes the action.
    */
   public function execute($host, $collection, $rate_field, $service_field, $remote_entity, $settings, $state) {
-    print_r("<br>set field collection<br>");
+    //print_r("<br>set field collection<br>");
     $service_field='field_'.$service_field;
     $rate_field='field_'.$rate_field;
     
