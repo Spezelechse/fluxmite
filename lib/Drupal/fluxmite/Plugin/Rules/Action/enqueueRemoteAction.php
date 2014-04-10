@@ -60,10 +60,24 @@ class enqueueRemoteAction extends RulesPluginHandlerBase implements \RulesAction
    * Executes the action.
    */
   public function execute($local_entity, $remote_type, $task_type, $task_priority) {
+    $local_type="";
+    $local_id=0;
+    $isNode=1;
+    if(method_exists($local_entity, 'entityType')){
+      $local_type=$local_entity->entityType();
+      $local_id=$local_entity->id;
+      $isNode=0;
+    }
+    else{
+      $local_type=$local_entity->type;
+      $local_id=$local_entity->nid;
+    }
+
     MiteTaskQueue::addTask(array( 'callback'=>$task_type,
                                   'task_priority'=>$task_priority,
-                                  'local_id'=>$local_entity->id,
-                                  'local_type'=>$local_entity->entityType(),
+                                  'local_id'=>$local_id,
+                                  'local_type'=>$local_type,
+                                  'isNode'=>$isNode,
                                   'remote_type'=>$remote_type));
   }
 }

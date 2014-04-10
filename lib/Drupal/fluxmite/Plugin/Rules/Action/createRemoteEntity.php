@@ -50,9 +50,22 @@ class createRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
    * Executes the action.
    */
   public function execute(MiteAccountInterface $account, $remote_entity, $local_entity) {
+    $local_type="";
+    $local_id=0;
+    $isNode=1;
+    if(method_exists($local_entity, 'entityType')){
+      $local_type=$local_entity->entityType();
+      $local_id=$local_entity->id;
+      $isNode=0;
+    }
+    else{
+      $local_type=$local_entity->type;
+      $local_id=$local_entity->nid;
+    }
+
     $controller = entity_get_controller($remote_entity->entityType());
     
-    $created = $controller->createRemote($local_entity->id, $local_entity->entityType(), $account, $remote_entity);
+    $created = $controller->createRemote($local_id, $local_type, $isNode, $account, $remote_entity);
 
     return array('created_entity'=>entity_metadata_wrapper($remote_entity->entityType(),$created));
   }

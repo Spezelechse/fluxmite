@@ -19,10 +19,11 @@ abstract class MiteControllerBase extends RemoteEntityController {
 /**
  * Creates a new database entry
  */
-  public function createLocal(RemoteEntityInterface $remote_entity, $local_entity_id, $local_entity_type){
-    $fields=array('id', 'type', 'remote_id', 'remote_type', 'mite_id', 'touched_last', 'created_at', 'updated_at');
+  public function createLocal(RemoteEntityInterface $remote_entity, $local_entity_id, $local_entity_type, $isNode){
+    $fields=array('id', 'type', 'isNode', 'remote_id', 'remote_type', 'mite_id', 'touched_last', 'created_at', 'updated_at');
     $values=array($local_entity_id, 
-                  $local_entity_type, 
+                  $local_entity_type,
+                  $isNode,
                   $remote_entity->id, 
                   $remote_entity->entityType(), 
                   $remote_entity->mite_id,
@@ -39,7 +40,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
 /**
  *    Sends a post request to create a new mite data set of the given type
  */
-  public function createRemote($local_entity_id, $local_entity_type, $account, $remote_entity, $request="", $remote_type=""){
+  public function createRemote($local_entity_id, $local_entity_type, $isNode, $account, $remote_entity, $request="", $remote_type=""){
       if($remote_entity!=null){
         $req=$this->createRequestString($remote_entity);
         $type_org=$remote_entity->entityType();
@@ -78,6 +79,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
                               'task_priority'=>2,
                               'local_id'=>$local_entity_id,
                               'local_type'=>$local_entity_type,
+                              'isNode'=>$isNode,
                               'request'=>$req,
                               'remote_type'=>$type_org),
                           $e->getResponse()->getMessage());
@@ -93,7 +95,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
         $remoteEntity = fluxservice_entify($response, $type_org, $account);
 
         //create local database entry
-        $this->createLocal($remoteEntity, $local_entity_id, $local_entity_type);
+        $this->createLocal($remoteEntity, $local_entity_id, $local_entity_type, $isNode);
         return $remoteEntity;
       }
   }
@@ -176,7 +178,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
     return $req;
   }
 
-  public function deleteRemote($local_entity_id, $local_entity_type, $account, $remote_type, $mite_id){
+  public function deleteRemote($local_entity_id, $local_entity_type, $isNode, $account, $remote_type, $mite_id){
     $type_split=explode("_",$remote_type);
     $type=$type_split[1];
 
@@ -202,6 +204,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
                             'task_priority'=>0,
                             'local_id'=>$local_entity_id,
                             'local_type'=>$local_entity_type,
+                            'isNode'=>$isNode,
                             'remote_type'=>$remote_type,
                             'mite_id'=>$mite_id),
                           $e->getResponse()->getMessage());
@@ -211,20 +214,25 @@ abstract class MiteControllerBase extends RemoteEntityController {
     }
 
     if((isset($response['status'])&&$response['status']==200)||$continue){
-      $num=db_delete('fluxmite')->condition('id', $local_entity_id)->condition('type', $local_entity_type)->execute();
+      $num=db_delete('fluxmite')
+            ->condition('id', $local_entity_id)
+            ->condition('type', $local_entity_type)
+            ->condition('isNode', $isNode)
+            ->execute();
     }
   }
 
   /**
    *  Updates the local fluxmite table
    */
-  public function updateLocal(RemoteEntityInterface $remote_entity, $local_entity_id, $local_entity_type){
+  public function updateLocal(RemoteEntityInterface $remote_entity, $local_entity_id, $local_entity_type, $isNode){
     $fields=array('updated_at'=>strtotime($remote_entity->updated_at));
 
     db_update('fluxmite')
       ->fields($fields)
       ->condition('id', $local_entity_id, '=')
       ->condition('type', $local_entity_type, '=')
+      ->condition('isNode', $isNode)
       ->execute();
   }
 
@@ -232,7 +240,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
   /**
   *   Sends a put request to update a mite data set and if successful updates the local table
   */
-  public function updateRemote($local_entity_id, $local_entity_type, $account, $remote_entity){
+  public function updateRemote($local_entity_id, $local_entity_type, $isNode, $account, $remote_entity){
     $req=$this->createRequestString($remote_entity);
 
     //extract mite type
@@ -263,6 +271,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
                             'task_priority'=>1,
                             'local_id'=>$local_entity_id,
                             'local_type'=>$local_entity_type,
+                            'isNode'=>$isNode,
                             'request'=>$req,
                             'remote_type'=>$remote_entity->entityType()),
                           $e->getResponse()->getMessage());
@@ -284,7 +293,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
       $remoteEntity = fluxservice_entify($response, $remote_entity->entityType(), $account);
 
       //update local database entry
-      $this->updateLocal($remoteEntity, $local_entity_id, $local_entity_type);
+      $this->updateLocal($remoteEntity, $local_entity_id, $local_entity_type, $isNode);
       return $remoteEntity;
     }
   }

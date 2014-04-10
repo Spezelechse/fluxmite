@@ -45,10 +45,24 @@ class fetchRemoteEntityByLocalEntity extends RulesPluginHandlerBase implements \
    */
   public function execute($local_entity) {
     //print_r("<br>fetch remote<br>");
+    $local_type="";
+    $local_id=0;
+    $isNode=1;
+    if(method_exists($local_entity, 'entityType')){
+      $local_type=$local_entity->entityType();
+      $local_id=$local_entity->id;
+      $isNode=0;
+    }
+    else{
+      $local_type=$local_entity->type;
+      $local_id=$local_entity->nid;
+    }
+
     $res=db_select('fluxmite','fm')
             ->fields('fm',array('remote_id','remote_type'))
-            ->condition('fm.id',$local_entity->id,'=')
-            ->condition('fm.type',$local_entity->entityType(),'=')
+            ->condition('fm.id',$local_id,'=')
+            ->condition('fm.type',$local_type,'=')
+            ->condition('fm.isNode',$isNode)
             ->execute()
             ->fetchAssoc();
 
@@ -56,7 +70,7 @@ class fetchRemoteEntityByLocalEntity extends RulesPluginHandlerBase implements \
     if($res){
       if(!$remote_entity=entity_load_single($res['remote_type'], $res['remote_id'])){
         $remote_entity=$local_entity;
-        $res['remote_type']=$local_entity->entityType();
+        $res['remote_type']=$local_type;
       }
 
       return array('entity_fetched' => entity_metadata_wrapper($res['remote_type'],$remote_entity));

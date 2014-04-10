@@ -39,17 +39,31 @@ class deleteRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
    * Executes the action.
    */
   public function execute(MiteAccountInterface $account, $local_entity) {
+    $local_type="";
+    $local_id=0;
+    $isNode=1;
+    if(method_exists($local_entity, 'entityType')){
+      $local_type=$local_entity->entityType();
+      $local_id=$local_entity->id;
+      $isNode=0;
+    }
+    else{
+      $local_type=$local_entity->type;
+      $local_id=$local_entity->nid;
+    }
+
     $res=db_select('fluxmite','fm')
             ->fields('fm',array('mite_id','remote_type'))
-            ->condition('fm.id',$local_entity->id,'=')
-            ->condition('fm.type',$local_entity->entityType(),'=')
+            ->condition('fm.id',$local_id,'=')
+            ->condition('fm.type',$local_type,'=')
+            ->condition('fm.isNode',$isNode)
             ->execute()
             ->fetchAssoc();
 
     if($res){
       $controller = entity_get_controller($res['remote_type']);
     
-      $controller->deleteRemote($local_entity->id, $local_entity->entityType(), $account, $res['remote_type'], $res['mite_id']);
+      $controller->deleteRemote($local_entity->id, $local_type, $isNode, $account, $res['remote_type'], $res['mite_id']);
     }
   }
 }
