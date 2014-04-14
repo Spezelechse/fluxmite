@@ -63,7 +63,7 @@ class deleteRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
     if($res){
       $controller = entity_get_controller($res['remote_type']);
     
-      $controller->deleteRemote($local_entity->id, $local_type, $isNode, $account, $res['remote_type'], $res['mite_id']);
+      $controller->deleteRemote($local_id, $local_type, $isNode, $account, $res['remote_type'], $res['mite_id']);
     }
   }
 }

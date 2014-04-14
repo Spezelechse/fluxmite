@@ -190,6 +190,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
     
     //build operation name
     $operation='delete'.ucfirst($type);
+    $continue=false;
 
     //try to send delete request
     try{
@@ -308,6 +309,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
     if($data!=array()&&!strpos($response_message,$document_not_found_eng)&&!strpos($response_message,$document_not_found_de)){
       MiteTaskQueue::addTask($data);
       watchdog('Fluxmite',$log_message);
+      return false;
     }
     else{
       return true;
