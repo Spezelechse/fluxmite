@@ -18,7 +18,7 @@ class MiteCustomer extends MiteEntityBase implements MiteCustomerInterface {
     parent::__construct($values, $entity_type);
 
     //case: active_hourly_rate = default
-    if(gettype($this->active_hourly_rate)=='array'){
+    if(isset($this->active_hourly_rate)&&gettype($this->active_hourly_rate)=='array'){
       $this->active_hourly_rate='nil';
     }
 

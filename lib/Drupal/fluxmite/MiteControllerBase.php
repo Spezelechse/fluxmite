@@ -85,6 +85,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
                           $e->getResponse()->getMessage());
         }
         else{
+          watchdog('fluxmite @ '.$operation, $e->getResponse()->getMessage());
         }
       }
 
@@ -175,6 +176,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
     $req.="<force>true</force>";
 
     $req="<".$type.">".$req."</".$type.">";
+    dpm($req);
     return $req;
   }
 
@@ -211,6 +213,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
                           $e->getResponse()->getMessage());
       }
       else{
+        watchdog('fluxmite @ '.$operation, $e->getResponse()->getMessage());
       }
     }
 
@@ -278,6 +281,7 @@ abstract class MiteControllerBase extends RemoteEntityController {
                           $e->getResponse()->getMessage());
       }
       else{
+        watchdog('fluxmite @ '.$operation, $e->getResponse()->getMessage());
       }
     }
 
