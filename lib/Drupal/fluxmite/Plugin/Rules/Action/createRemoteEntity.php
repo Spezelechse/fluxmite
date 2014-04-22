@@ -50,6 +50,9 @@ class createRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
    * Executes the action.
    */
   public function execute(MiteAccountInterface $account, $remote_entity, $local_entity) {
+    dpm("create remote mite");
+    print_r("create remote mite<br>");
+
     $local_type="";
     $local_id=0;
     $isNode=1;

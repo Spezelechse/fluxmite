@@ -29,7 +29,7 @@ class fetchRemoteEntityByLocalEntity extends RulesPluginHandlerBase implements \
           'type' => 'entity',
           'label' => t('Local entity'),
           'required' => TRUE,
-          'wrapped' => FALSE,
+          'wrapped' => TRUE,
         ),
       ),
       'provides' => array(
@@ -54,8 +54,8 @@ class fetchRemoteEntityByLocalEntity extends RulesPluginHandlerBase implements \
       $isNode=0;
     }
     else{
-      $local_type=$local_entity->type;
-      $local_id=$local_entity->nid;
+      $local_type=$local_entity->type();
+      $local_id=$local_entity->getIdentifier();
     }
 
     $res=db_select('fluxmite','fm')

@@ -50,7 +50,8 @@ class updateRemoteEntity extends RulesPluginHandlerBase implements \RulesActionH
    * Executes the action.
    */
   public function execute(MiteAccountInterface $account, $remote_entity, $local_entity) {
-    dpm("update remote");
+    dpm("update remote mite");
+    print_r("update remote mite<br>");
     
     $local_type="";
     $local_id=0;

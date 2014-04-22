@@ -45,6 +45,9 @@ class updateLocalEntity extends RulesPluginHandlerBase implements \RulesActionHa
    * Executes the action.
    */
   public function execute(MiteAccountInterface $account, $remote_entity, $local_entity) {
+    print_r("update local mite<br>");
+    dpm("update local mite");
+    
     $local_type="";
     $local_id=0;
     $isNode=1;

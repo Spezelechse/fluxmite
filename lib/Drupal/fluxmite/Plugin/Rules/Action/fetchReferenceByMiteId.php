@@ -56,9 +56,6 @@ class fetchReferenceByMiteId extends RulesPluginHandlerBase implements \RulesAct
    */
   public function execute($mite_id, $local_type,$remote_entity) {
 //    print_r("<br>fetch reference: ".$mite_id."<br>");
-    print_r($mite_id);
-    echo "<br>";
-    print_r($local_type);
     $res=db_select('fluxmite','fm')
           ->fields('fm',array('id','type','remote_type','mite_id'))
           ->condition('fm.mite_id',$mite_id,'=')

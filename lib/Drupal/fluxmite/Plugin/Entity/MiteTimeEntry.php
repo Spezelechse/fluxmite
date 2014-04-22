@@ -69,7 +69,7 @@ class MiteTimeEntry extends MiteEntityBase implements MiteTimeEntryInterface {
     $info['minutes'] = array(
       'label' => t('Minutes'),
       'description' => t("Time minutes."),
-      'type' => 'text',
+      'type' => 'integer',
       'setter callback' => 'entity_property_verbatim_set',
     );
     $info['revenue'] = array(
