@@ -7,300 +7,96 @@
 
 namespace Drupal\fluxmite;
 
-use Drupal\fluxservice\Entity\FluxEntityInterface;
-use Drupal\fluxservice\RemoteEntityController;
-use Drupal\fluxservice\Entity\RemoteEntityInterface;
+use Drupal\fluxservice_extension\RemoteEntityControllerExtended;
 use Guzzle\Http\Exception\BadResponseException;
 
 /**
  * Class RemoteEntityController
  */
-abstract class MiteControllerBase extends RemoteEntityController {
-/**
- * Creates a new database entry
- */
-  public function createLocal(RemoteEntityInterface $remote_entity, $local_entity_id, $local_entity_type, $isNode){
-    $fields=array('id', 'type', 'isNode', 'remote_id', 'remote_type', 'mite_id', 'touched_last', 'created_at', 'updated_at');
-    $values=array($local_entity_id, 
-                  $local_entity_type,
-                  $isNode,
-                  $remote_entity->id, 
-                  $remote_entity->entityType(), 
-                  $remote_entity->mite_id,
-                  time(),
-                  strtotime($remote_entity->created_at), 
-                  strtotime($remote_entity->updated_at));
-
-    $nid=db_insert('fluxmite')
-      ->fields($fields)
-      ->values($values)
-      ->execute();
-  }
-
-/**
- *    Sends a post request to create a new mite data set of the given type
- */
-  public function createRemote($local_entity_id, $local_entity_type, $isNode, $account, $remote_entity, $request="", $remote_type=""){
-      if($remote_entity!=null){
-        $req=$this->createRequestString($remote_entity);
-        $type_org=$remote_entity->entityType();
-      }
-      else if($request!=""){
-        $req=$request;
-        $type_org=$remote_type;
-      }
-      else{
-        //TODO: throw error missing argument
-      }
-
-      //extract mite type
-      $type=$type_org;
-      $type_split=explode("_",$type);
-      $type=$type_split[1];
-
-      if($type=='time'){
-        $type.='_'.$type_split[2];
-      }
-
-      $client=$account->client();
-
-      //build operation name
-      $operation='post'.ucfirst($type);
-      
-      //try to send the post request
-      try{
-        $response=$client->$operation(array('data' => $req, 'api_key'=>$client->getConfig('access_token')));
-      }
-      catch(BadResponseException $e){
-        if($e->getResponse()->getStatusCode()==404){
-          $this->handle404( '[404] Host "'.$account->client()->getBaseUrl().'" not found ('.$operation.')',
-                            array(
-                              'callback'=>'post',
-                              'task_priority'=>2,
-                              'local_id'=>$local_entity_id,
-                              'local_type'=>$local_entity_type,
-                              'isNode'=>$isNode,
-                              'request'=>$req,
-                              'remote_type'=>$type_org),
-                          $e->getResponse()->getMessage());
-        }
-        else{
-          watchdog('fluxmite @ '.$operation, $e->getResponse()->getMessage());
-        }
-      }
-
-      if(isset($response)){
-        //generate an array from xml
-        $response = json_decode(json_encode($response),1);
-
-        $remoteEntity = fluxservice_entify($response, $type_org, $account);
-
-        //create local database entry
-        $this->createLocal($remoteEntity, $local_entity_id, $local_entity_type, $isNode);
-        return $remoteEntity;
-      }
-  }
-
+abstract class MiteControllerBase extends RemoteEntityControllerExtended {
   /**
    *  Builds an xml request string for the given entity
    */
-  private function createRequestString(RemoteEntityInterface $remote_entity){
+  public function createRequest($client, $operation_type, $remote_entity=null, $remote_id=0){
     $properties=$remote_entity->getEntityPropertyInfo("","");
+    $req=array('api_key'=>$client->getConfig('access_token'));
 
     //extract mite type
-    $type=$remote_entity->entityType();
-    $type_split=explode("_",$type);
-    $req="";
-
-    $type=$type_split[1];
-    if($type=='time'){
-        $type.='-'.$type_split[2];
-    }
-      
-    //generate a xml element for every set entity property
-    foreach ($properties as $key => $value) {
-      if($key=='id'||$key=='updated_at'||$key=='created_at'||$key=='hourly_rates_per_service'||$key=='mite_id'){
-        continue;
-      }
-
-      if(isset($remote_entity->$key)){
-        $value=$remote_entity->$key;
-        $data_type='';
-
-        //special for dates, arrays and boolean
-        if($key=='date_at'){
-          if(isset($value)){
-            $value=date('Y-m-d',$value);
-          }
-          else{
-            $value=date('Y-m-d');
-          }
-        }
-        else if($key=='since'){
-          if(isset($value)){
-            $value=date('Y-m-d\TH:m:sP',$value);
-          }
-          else{
-            $value=date('Y-m-d\TH:m:sP');
-          }
-        }
-        else if($key=='hourly_rates_per_service_json'){
-          $key='hourly_rates_per_service';
-          if(isset($value)&&$value!=""){
-            //build array from json
-            $buffer=json_decode($value);
-
-            if(gettype($buffer)!='array'){
-              $buffer=array($buffer);
-            }
-
-            $value='';
-            foreach ($buffer as $rate) {
-              $value.='<hourly-rate-per-service>';
-                $value.='<service-id type="integer">'.$rate->{"service-id"}.'</service-id>';
-                $value.='<hourly-rate type="integer">'.$rate->{"hourly-rate"}.'</hourly-rate>';
-              $value.='</hourly-rate-per-service>';
-            }
-            $data_type=' type="array"';
-          }
-        }
-        else if($key=='billable'||$key=='archived'||$key=='locked'){
-          $value=($value==0 ? 'false' : 'true');
-        }
-
-        $key=str_replace('_', '-', $key);
-        $req.="<".$key."".$data_type.">".$value."</".$key.">"; 
-      }
-    }
-
-    $req.="<force>true</force>";
-
-    $req="<".$type.">".$req."</".$type.">";
-    //dpm($req);
-    return $req;
-  }
-
-  public function deleteRemote($local_entity_id, $local_entity_type, $isNode, $account, $remote_type, $mite_id){
-    $type_split=explode("_",$remote_type);
-    $type=$type_split[1];
-
-    if($type=='time'){
-        $type.='_'.$type_split[2];
-    }
-      
-    $client=$account->client();
+    $type=$this->extractRemoteType($remote_entity->entityType());
     
-    //build operation name
-    $operation='delete'.ucfirst($type);
-    $continue=false;
-
-    //try to send delete request
-    try{
-      $response=$client->$operation(array(  'id' => (int)$mite_id,
-                                            'api_key'=>$client->getConfig('access_token')));
-    }
-    catch(BadResponseException $e){
-      if($e->getResponse()->getStatusCode()==404){
-        $continue=$this->handle404( '[404] Host "'.$account->client()->getBaseUrl().'" not found ('.$operation.')',
-                          array(
-                            'callback'=>'delete',
-                            'task_priority'=>0,
-                            'local_id'=>$local_entity_id,
-                            'local_type'=>$local_entity_type,
-                            'isNode'=>$isNode,
-                            'remote_type'=>$remote_type,
-                            'mite_id'=>$mite_id),
-                          $e->getResponse()->getMessage());
-      }
-      else{
-        watchdog('fluxmite @ '.$operation, $e->getResponse()->getMessage());
+    if($operation_type=='get'){
+      if(isset($remote_id)){
+        $req['id']=(int)$remote_id;
       }
     }
+    else if(isset($remote_entity)){
+      //generate a xml element for every set entity property
+      foreach ($properties as $key => $value) {
+        if($key=='id'||$key=='updated_at'||$key=='created_at'||$key=='hourly_rates_per_service'||$key=='remote_id'){
+          continue;
+        }
 
-    if((isset($response['status'])&&$response['status']==200)||$continue){
-      $num=db_delete('fluxmite')
-            ->condition('id', $local_entity_id)
-            ->condition('type', $local_entity_type)
-            ->condition('isNode', $isNode)
-            ->execute();
-    }
-  }
+        if(isset($remote_entity->$key)){
+          $value=$remote_entity->$key;
+          $data_type='';
 
-  /**
-   *  Updates the local fluxmite table
-   */
-  public function updateLocal(RemoteEntityInterface $remote_entity, $local_entity_id, $local_entity_type, $isNode){
-    $fields=array('updated_at'=>strtotime($remote_entity->updated_at));
+          //special for dates, arrays and boolean
+          if($key=='date_at'){
+            if(isset($value)){
+              $value=date('Y-m-d',$value);
+            }
+            else{
+              $value=date('Y-m-d');
+            }
+          }
+          else if($key=='since'){
+            if(isset($value)){
+              $value=date('Y-m-d\TH:m:sP',$value);
+            }
+            else{
+              $value=date('Y-m-d\TH:m:sP');
+            }
+          }
+          else if($key=='hourly_rates_per_service_json'){
+            $key='hourly_rates_per_service';
+            if(isset($value)&&$value!=""){
+              //build array from json
+              $buffer=json_decode($value);
 
-    db_update('fluxmite')
-      ->fields($fields)
-      ->condition('id', $local_entity_id, '=')
-      ->condition('type', $local_entity_type, '=')
-      ->condition('isNode', $isNode)
-      ->execute();
-  }
+              if(gettype($buffer)!='array'){
+                $buffer=array($buffer);
+              }
 
+              $value='';
+              foreach ($buffer as $rate) {
+                $value.='<hourly-rate-per-service>';
+                  $value.='<service-id type="integer">'.$rate->{"service-id"}.'</service-id>';
+                  $value.='<hourly-rate type="integer">'.$rate->{"hourly-rate"}.'</hourly-rate>';
+                $value.='</hourly-rate-per-service>';
+              }
+              $data_type=' type="array"';
+            }
+          }
+          else if($key=='billable'||$key=='archived'||$key=='locked'){
+            $value=($value==0 ? 'false' : 'true');
+          }
 
-  /**
-  *   Sends a put request to update a mite data set and if successful updates the local table
-  */
-  public function updateRemote($local_entity_id, $local_entity_type, $isNode, $account, $remote_entity){
-    $req=$this->createRequestString($remote_entity);
-
-    //extract mite type
-    $type=$remote_entity->entityType();
-    $type_split=explode("_",$type);
-    $type=$type_split[1];
-
-    if($type=='time'){
-        $type.='_'.$type_split[2];
-    }  
-
-    $client=$account->client();
-
-    //build operation name
-    $operation='put'.ucfirst($type);
-
-    //try to send the update request
-    try{
-      $response=$client->$operation(array(  'data' => $req, 
-                                            'id' => (int)$remote_entity->mite_id,
-                                            'api_key'=>$client->getConfig('access_token')));
-    }
-    catch(BadResponseException $e){
-      if($e->getResponse()->getStatusCode()==404){
-        $this->handle404( '[404] Host "'.$account->client()->getBaseUrl().'" not found ('.$operation.')', 
-                          array(
-                            'callback'=>'put',
-                            'task_priority'=>1,
-                            'local_id'=>$local_entity_id,
-                            'local_type'=>$local_entity_type,
-                            'isNode'=>$isNode,
-                            'request'=>$req,
-                            'remote_type'=>$remote_entity->entityType()),
-                          $e->getResponse()->getMessage());
+          $key=str_replace('_', '-', $key);
+          $data.="<".$key."".$data_type.">".$value."</".$key.">"; 
+        }
       }
-      else{
-        watchdog('fluxmite @ '.$operation, $e->getResponse()->getMessage());
+
+      $data.="<force>true</force>";
+
+      $data="<".$type.">".$data."</".$type.">";
+      $req['data']=$req;
+
+      if(isset($remote_entity->remote_id)){
+        $req['id']=(int)$remote_entity->remote_id;
       }
     }
-
-    //check if successful
-    if(isset($response['status'])&&$response['status']==200){
-      //get the new updated-at timestamp
-      $operation='get'.ucfirst($type);
-      $response=$client->$operation(array('id' => (int)$remote_entity->mite_id,
-                                          'api_key'=>$client->getConfig('access_token')));
-
-      //generate an array from xml
-      $response = json_decode(json_encode($response),1);
-
-      $remoteEntity = fluxservice_entify($response, $remote_entity->entityType(), $account);
-
-      //update local database entry
-      $this->updateLocal($remoteEntity, $local_entity_id, $local_entity_type, $isNode);
-      return $remoteEntity;
-    }
+    
+    return $req;
   }
 
   /**
@@ -319,4 +115,26 @@ abstract class MiteControllerBase extends RemoteEntityController {
       return true;
     }
   }
+
+  /**
+   * 
+   */
+  public function extractRemoteType($entity_type){
+    $type_split=explode("_",$entity_type);
+    $type=$type_split[1];
+
+    if($type=='time'){
+        $type.='_'.$type_split[2];
+    }
+    return $type;
+  }
+
+  /**
+   * 
+   */
+  public function prepareResponse($response){
+    return json_decode(json_encode($response),1);
+  }
+
+  public function addAdditionalFields(&$fields, &$values, $remote_entity){}
 }

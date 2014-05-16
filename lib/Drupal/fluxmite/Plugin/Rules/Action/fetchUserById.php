@@ -24,7 +24,7 @@ class fetchUserById extends RulesPluginHandlerBase implements \RulesActionHandle
       'name' => 'fluxmite_fetch_user_by_id',
       'label' => t('Fetch user by id'),
       'parameter' => array(
-        'account' => static::getServiceParameterInfo(),
+        'account' => static::getServiceParameterInfo('fluxmite'),
         'mite_id' => array(
           'type' => 'integer',
           'label' => t('Mite id'),

@@ -7,12 +7,12 @@
 
 namespace Drupal\fluxmite\Plugin\Entity;
 
-use Drupal\fluxservice\Entity\RemoteEntity;
+use Drupal\fluxservice_extension\Plugin\Entity\RemoteEntityExtended;
 
 /**
  * Entity class for Mite Customers.
  */
-class MiteEntityBase extends RemoteEntity implements MiteEntityBaseInterface {
+class MiteEntityBase extends RemoteEntityExtended implements MiteEntityBaseInterface {
 	public function __construct(array $values = array(), $entity_type = NULL) {
 		if(isset($values)&&$values!=array()){
 	   		$keys=array_keys($values);
@@ -23,7 +23,7 @@ class MiteEntityBase extends RemoteEntity implements MiteEntityBaseInterface {
 
 	   		$values=array_combine($keys, $values);
 	   		$id=explode(':', $values['id']);
-	   		$this->mite_id=$id[2];
+	   		$this->remote_id=$id[2];
 
 	   		if(isset($values['billable'])){
 	   			$values['billable']=($values['billable']=='false'?0:1);
@@ -63,5 +63,41 @@ class MiteEntityBase extends RemoteEntity implements MiteEntityBaseInterface {
    		}
 
    		parent::__construct($values, $entity_type);
+   	}
+
+	/**
+   	  * Gets the entity property definitions.
+   	  */
+  	public static function getEntityPropertyInfo($entity_type, $entity_info) {
+  		$info['id'] = array(
+	      'label' => t('Id'),
+	      'description' => t("Entity id."),
+	      'type' => 'text',
+	      'setter callback' => 'entity_property_verbatim_set',
+	    );
+	    $info['remote_id'] = array(
+	      'label' => t('Mite id'),
+	      'description' => t("Mite id."),
+	      'type' => 'text',
+	      'setter callback' => 'entity_property_verbatim_set',
+	    );		    
+	    $info['created_at'] = array(
+	      'label' => t('Created-at'),
+	      'description' => t("Date which the data was created at"),
+	      'type' => 'date',
+	      'setter callback' => 'entity_property_verbatim_set',
+	    );
+	    $info['updated_at'] = array(
+	      'label' => t('Updated-at'),
+	      'description' => t("Date of the last update"),
+	      'type' => 'date',
+	      'setter callback' => 'entity_property_verbatim_set',
+	    );
+
+	    return $info;
+  	}
+
+   	public function getCheckValue(){
+   		return strtotime($this->updated_at);
    	}
 }

@@ -48,18 +48,8 @@ class MiteTimeEntry extends MiteEntityBase implements MiteTimeEntryInterface {
    * Gets the entity property definitions.
    */
   public static function getEntityPropertyInfo($entity_type, $entity_info) {
-    $info['id'] = array(
-      'label' => t('Id'),
-      'description' => t("Time id."),
-      'type' => 'text',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
-    $info['mite_id'] = array(
-      'label' => t('Mite id'),
-      'description' => t("Mite id."),
-      'type' => 'integer',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
+    $info=parent::getEntityPropertyInfo($entity_type,$entity_info);
+  
     $info['date_at'] = array(
       'label' => t('Date-at'),
       'description' => t("Time date-at."),
@@ -148,18 +138,6 @@ class MiteTimeEntry extends MiteEntityBase implements MiteTimeEntryInterface {
       'label' => t('Locked'),
       'description' => t("Time locked."),
       'type' => 'boolean',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
-    $info['created_at'] = array(
-      'label' => t('Created-at'),
-      'description' => t("Date which the Account was created"),
-      'type' => 'date',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
-    $info['updated_at'] = array(
-      'label' => t('Updated-at'),
-      'description' => t("Date of the last update"),
-      'type' => 'date',
       'setter callback' => 'entity_property_verbatim_set',
     );
     return $info;

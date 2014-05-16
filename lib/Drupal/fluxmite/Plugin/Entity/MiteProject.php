@@ -61,18 +61,8 @@ class MiteProject extends MiteEntityBase implements MiteProjectInterface {
    * Gets the entity property definitions.
    */
   public static function getEntityPropertyInfo($entity_type, $entity_info) {
-    $info['id'] = array(
-      'label' => t('Id'),
-      'description' => t("Project id."),
-      'type' => 'text',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
-    $info['mite_id'] = array(
-      'label' => t('Mite id'),
-      'description' => t("Mite id."),
-      'type' => 'integer',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
+    $info=parent::getEntityPropertyInfo($entity_type,$entity_info);
+
     $info['name'] = array(
       'label' => t('Name'),
       'description' => t("Project name."),
@@ -153,18 +143,7 @@ class MiteProject extends MiteEntityBase implements MiteProjectInterface {
       'type' => 'text',
       'setter callback' => 'entity_property_verbatim_set',
     );
-    $info['created_at'] = array(
-      'label' => t('Created-at'),
-      'description' => t("Date which the Account was created"),
-      'type' => 'date',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
-    $info['updated_at'] = array(
-      'label' => t('Updated-at'),
-      'description' => t("Date of the last update"),
-      'type' => 'date',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
+    
     return $info;
   }
 }

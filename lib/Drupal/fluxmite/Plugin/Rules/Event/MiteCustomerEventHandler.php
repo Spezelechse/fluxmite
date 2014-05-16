@@ -19,8 +19,7 @@ class MiteCustomerEventHandler extends MiteEventHandlerBase {
     return static::getInfoDefaults() + array(
       'name' => 'fluxmite_customer_event',
       'label' => t('Something happend to a customer'),
-      'variables' => array(
-        'account' => static::getServiceVariableInfo(),
+      'variables' => static::getServiceVariableInfo()+array(
         'customer' => array(
           'type' => 'fluxmite_customer',
           'label' => t('Mite: Customer'),

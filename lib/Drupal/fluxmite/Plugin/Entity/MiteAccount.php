@@ -38,20 +38,8 @@ class MiteAccount extends MiteEntityBase implements MiteAccountInterface {
    * Gets the entity property definitions.
    */
   public static function getEntityPropertyInfo($entity_type, $entity_info) {
-    $info['id'] = array(
-      'label' => t('Id'),
-      'description' => t("Account id."),
-      'type' => 'text',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
+    $info=parent::getEntityPropertyInfo($entity_type,$entity_info);
     
-    $info['mite_id'] = array(
-      'label' => t('Mite id'),
-      'description' => t("Mite id."),
-      'type' => 'integer',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
-
     $info['name'] = array(
       'label' => t('Name'),
       'description' => t("Account name"),
@@ -70,19 +58,6 @@ class MiteAccount extends MiteEntityBase implements MiteAccountInterface {
       'label' => t('Currency'),
       'description' => t("Account currency"),
       'type' => 'text',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
-
-    $info['created_at'] = array(
-      'label' => t('Created-at'),
-      'description' => t("Date which the Account was created"),
-      'type' => 'date',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
-    $info['updated_at'] = array(
-      'label' => t('Updated-at'),
-      'description' => t("Date of the last update"),
-      'type' => 'date',
       'setter callback' => 'entity_property_verbatim_set',
     );
  

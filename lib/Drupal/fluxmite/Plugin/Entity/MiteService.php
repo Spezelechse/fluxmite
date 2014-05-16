@@ -38,18 +38,8 @@ class MiteService extends MiteEntityBase implements MiteServiceInterface {
    * Gets the entity property definitions.
    */
   public static function getEntityPropertyInfo($entity_type, $entity_info) {
-    $info['id'] = array(
-      'label' => t('Id'),
-      'description' => t("Service id."),
-      'type' => 'text',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
-    $info['mite_id'] = array(
-      'label' => t('Mite id'),
-      'description' => t("Mite id."),
-      'type' => 'integer',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
+    $info=parent::getEntityPropertyInfo($entity_type,$entity_info);
+    
     $info['name'] = array(
       'label' => t('Name'),
       'description' => t("Service name."),
@@ -78,18 +68,6 @@ class MiteService extends MiteEntityBase implements MiteServiceInterface {
       'label' => t('Archived'),
       'description' => t("Service archived."),
       'type' => 'boolean',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
-    $info['created_at'] = array(
-      'label' => t('Created-at'),
-      'description' => t("Date which the Account was created"),
-      'type' => 'date',
-      'setter callback' => 'entity_property_verbatim_set',
-    );
-    $info['updated_at'] = array(
-      'label' => t('Updated-at'),
-      'description' => t("Date of the last update"),
-      'type' => 'date',
       'setter callback' => 'entity_property_verbatim_set',
     );
     return $info;

@@ -7,12 +7,12 @@
 
 namespace Drupal\fluxmite\Rules;
 
-use Drupal\fluxservice\Rules\FluxRulesPluginHandlerBase;
+use Drupal\fluxservice_extension\Rules\FluxRulesPluginHandlerBaseExtended;
 
 /**
  * Base class for mite Rules plugin handler.
  */
-abstract class RulesPluginHandlerBase extends FluxRulesPluginHandlerBase {
+abstract class RulesPluginHandlerBase extends FluxRulesPluginHandlerBaseExtended {
 
   /**
    * Returns info-defaults for mite plugin handlers.
@@ -30,17 +30,4 @@ abstract class RulesPluginHandlerBase extends FluxRulesPluginHandlerBase {
   public static function integrationAccess($type, $name) {
     return fluxservice_access_by_plugin('fluxmite');
   }
-
-  /**
-   * Returns info suiting for mite service account parameters.
-   */
-  public static function getServiceParameterInfo() {
-    return array(
-      'type' => 'fluxservice_account',
-      'bundle' => 'fluxmite',
-      'label' => t('Mite account'),
-      'description' => t('The Mite account which this shall be executed.'),
-    );
-  }
-
 }

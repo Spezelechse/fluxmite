@@ -7,11 +7,11 @@
 
 namespace Drupal\fluxmite\Plugin\Entity;
 
-use Drupal\fluxservice\Entity\RemoteEntityInterface;
+use Drupal\fluxservice_extension\Plugin\Entity\RemoteEntityExtendedInterface;
 
 /**
  * Interfaces for Mite Entity Base.
  */
-interface MiteEntityBaseInterface extends RemoteEntityInterface {
+interface MiteEntityBaseInterface extends RemoteEntityExtendedInterface {
 
 }
