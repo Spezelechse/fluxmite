@@ -102,8 +102,8 @@ class updateLocalHourlyRatePerService extends RulesPluginHandlerBase implements 
         $item->{$rate_field}['und'][0]['value']=$rate['hourly_rate'];
 
         $res=db_select('fluxmite','fm')
-          ->fields('fm',array('id','type','remote_type','mite_id'))
-          ->condition('fm.mite_id',$rate['service_id'],'=')
+          ->fields('fm',array('id','type','remote_type','remote_id'))
+          ->condition('fm.remote_id',$rate['service_id'],'=')
           ->condition('fm.remote_type','fluxmite_service','=')
           ->execute()
           ->fetchAssoc();

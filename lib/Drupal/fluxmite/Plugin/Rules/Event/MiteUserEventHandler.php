@@ -19,23 +19,11 @@ class MiteUserEventHandler extends MiteEventHandlerBase {
     return static::getInfoDefaults() + array(
       'name' => 'fluxmite_user_event',
       'label' => t('Something happend to a user'),
-      'variables' => array(
-        'account' => static::getServiceVariableInfo(),
+      'variables' => static::getServiceVariableInfo()+array(
         'user' => array(
           'type' => 'fluxmite_user',
           'label' => t('Mite: User'),
           'description' => t('The user that triggered the event.'),
-        ),
-        'change_type' => array(
-          'type' => 'text',
-          'options list' => 'change_type_get_options',
-          'label' => t('Change type'),
-          'restiction' => 'input',
-        ),
-        'local_entity_id' => array(
-          'type' => 'integer',
-          'label' => t('Local entity id'),
-          'optional' => TRUE,
         ),
       ),
     );

@@ -60,6 +60,15 @@ class MiteEntityBase extends RemoteEntityExtended implements MiteEntityBaseInter
 	   		if(isset($values['service_id'])&&gettype($values['service_id'])=='array'){
 	   			$values['service_id']=0;
 	   		}
+
+	   		if(isset($values['updated_at'])){
+	   			$values['updated_at']=strtotime($values['updated_at']);
+	   		}
+
+	   		if(isset($values['updated_at'])){
+	   			$values['created_at']=strtotime($values['created_at']);	   			
+	   		}
+
    		}
 
    		parent::__construct($values, $entity_type);
@@ -69,16 +78,12 @@ class MiteEntityBase extends RemoteEntityExtended implements MiteEntityBaseInter
    	  * Gets the entity property definitions.
    	  */
   	public static function getEntityPropertyInfo($entity_type, $entity_info) {
-  		$info['id'] = array(
-	      'label' => t('Id'),
-	      'description' => t("Entity id."),
-	      'type' => 'text',
-	      'setter callback' => 'entity_property_verbatim_set',
-	    );
+	    $info=parent::getEntityPropertyInfo($entity_type,$entity_info);
+
 	    $info['remote_id'] = array(
 	      'label' => t('Mite id'),
 	      'description' => t("Mite id."),
-	      'type' => 'text',
+	      'type' => 'integer',
 	      'setter callback' => 'entity_property_verbatim_set',
 	    );		    
 	    $info['created_at'] = array(
@@ -98,6 +103,6 @@ class MiteEntityBase extends RemoteEntityExtended implements MiteEntityBaseInter
   	}
 
    	public function getCheckValue(){
-   		return strtotime($this->updated_at);
+   		return $this->updated_at;
    	}
 }

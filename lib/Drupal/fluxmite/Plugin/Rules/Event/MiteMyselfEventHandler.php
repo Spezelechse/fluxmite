@@ -19,23 +19,11 @@ class MiteMyselfEventHandler extends MiteEventHandlerBase {
     return static::getInfoDefaults() + array(
       'name' => 'fluxmite_myself_event',
       'label' => t('Something happend to myself'),
-      'variables' => array(
-        'account' => static::getServiceVariableInfo(),
+      'variables' => static::getServiceVariableInfo()+array(
         'customer' => array(
           'type' => 'fluxmite_myself',
           'label' => t('Mite: Myself'),
           'description' => t('Myself who triggered the event.'),
-        ),
-        'change_type' => array(
-          'type' => 'text',
-          'options list' => 'change_type_get_options',
-          'label' => t('Change type'),
-          'restiction' => 'input',
-        ),
-        'local_entity_id' => array(
-          'type' => 'integer',
-          'label' => t('Local entity id'),
-          'optional' => TRUE,
         ),
       ),
     );

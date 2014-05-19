@@ -18,11 +18,7 @@ abstract class MiteControllerBase extends RemoteEntityControllerExtended {
    *  Builds an xml request string for the given entity
    */
   public function createRequest($client, $operation_type, $remote_entity=null, $remote_id=0){
-    $properties=$remote_entity->getEntityPropertyInfo("","");
     $req=array('api_key'=>$client->getConfig('access_token'));
-
-    //extract mite type
-    $type=$this->extractRemoteType($remote_entity->entityType());
     
     if($operation_type=='get'){
       if(isset($remote_id)){
@@ -30,6 +26,12 @@ abstract class MiteControllerBase extends RemoteEntityControllerExtended {
       }
     }
     else if(isset($remote_entity)){
+      $properties=$remote_entity->getEntityPropertyInfo("","");
+
+      //extract mite type
+      $type=$this->extractRemoteType($remote_entity->entityType());
+      $data='';
+
       //generate a xml element for every set entity property
       foreach ($properties as $key => $value) {
         if($key=='id'||$key=='updated_at'||$key=='created_at'||$key=='hourly_rates_per_service'||$key=='remote_id'){
@@ -89,7 +91,7 @@ abstract class MiteControllerBase extends RemoteEntityControllerExtended {
       $data.="<force>true</force>";
 
       $data="<".$type.">".$data."</".$type.">";
-      $req['data']=$req;
+      $req['data']=$data;
 
       if(isset($remote_entity->remote_id)){
         $req['id']=(int)$remote_entity->remote_id;

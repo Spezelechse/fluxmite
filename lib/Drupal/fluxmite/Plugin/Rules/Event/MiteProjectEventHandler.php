@@ -19,23 +19,11 @@ class MiteProjectEventHandler extends MiteEventHandlerBase {
     return static::getInfoDefaults() + array(
       'name' => 'fluxmite_project_event',
       'label' => t('Somthing happend to a project'),
-      'variables' => array(
-        'account' => static::getServiceVariableInfo(),
+      'variables' => static::getServiceVariableInfo()+array(
         'project' => array(
           'type' => 'fluxmite_project',
           'label' => t('Mite: Project'),
           'description' => t('The project that triggered the event.'),
-        ),
-        'change_type' => array(
-          'type' => 'text',
-          'options list' => 'change_type_get_options',
-          'label' => t('Change type'),
-          'restiction' => 'input',
-        ),
-        'local_entity_id' => array(
-          'type' => 'integer',
-          'label' => t('Local entity id'),
-          'optional' => TRUE,
         ),
       ),
     );

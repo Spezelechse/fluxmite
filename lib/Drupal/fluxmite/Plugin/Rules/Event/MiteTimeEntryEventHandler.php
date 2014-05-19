@@ -19,23 +19,11 @@ class MiteTimeEntryEventHandler extends MiteEventHandlerBase {
     return static::getInfoDefaults() + array(
       'name' => 'fluxmite_time_entry_event',
       'label' => t('Something happend to a time entry'),
-      'variables' => array(
-        'account' => static::getServiceVariableInfo(),
+      'variables' => static::getServiceVariableInfo()+array(
         'time' => array(
           'type' => 'fluxmite_time_entry',
           'label' => t('Mite: Time entry'),
           'description' => t('The time entry that triggered the event.'),
-        ),
-        'change_type' => array(
-          'type' => 'text',
-          'options list' => 'change_type_get_options',
-          'label' => t('Change type'),
-          'restiction' => 'input',
-        ),
-        'local_entity_id' => array(
-          'type' => 'integer',
-          'label' => t('Local entity id'),
-          'optional' => TRUE,
         ),
       ),
     );

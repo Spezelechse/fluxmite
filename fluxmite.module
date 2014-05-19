@@ -1,5 +1,4 @@
 <?php
-use Drupal\fluxmite\MiteQueuedTasks;
 /**
  * @file
  * Main module file.
@@ -43,26 +42,4 @@ function fluxmite_rules_category_info() {
  */
 function fluxmite_fluxservice_plugin_directory() {
 	return 'lib/Drupal/fluxmite/Plugin';
-}
-
-
-/**
- * 
- */
-function task_type_get_options(){
-	return MiteQueuedTasks::getOptions();
-}
-
-/**
- * 
- */
-function task_priority_get_options(){
-	return array(0,1,2,3,5);
-}
-
-/**
- * 
- */
-function change_type_get_options(){
-	return array('create'=>'create','delete'=>'delete','update'=>'update');
 }

@@ -25,7 +25,7 @@ class fetchUserById extends RulesPluginHandlerBase implements \RulesActionHandle
       'label' => t('Fetch user by id'),
       'parameter' => array(
         'account' => static::getServiceParameterInfo('fluxmite'),
-        'mite_id' => array(
+        'remote_id' => array(
           'type' => 'integer',
           'label' => t('Mite id'),
           'required' => TRUE,
@@ -48,12 +48,12 @@ class fetchUserById extends RulesPluginHandlerBase implements \RulesActionHandle
   /**
    * Executes the action.
    */
-  public function execute($account, $mite_id, $remote_entity) {
+  public function execute($account, $remote_id, $remote_entity) {
 
     $controller=entity_get_controller('fluxmite_user');
 
     $type='fluxmite_user';
-    $user=$controller->loadRemote($mite_id, $account);
+    $user=$controller->loadRemote($remote_id, $account);
 
     if(!$user){
       $type=$remote_entity->entityType();

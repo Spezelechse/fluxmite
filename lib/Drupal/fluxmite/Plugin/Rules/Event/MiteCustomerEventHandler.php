@@ -25,17 +25,6 @@ class MiteCustomerEventHandler extends MiteEventHandlerBase {
           'label' => t('Mite: Customer'),
           'description' => t('The customer that triggered the event.'),
         ),
-        'change_type' => array(
-          'type' => 'text',
-          'options list' => 'change_type_get_options',
-          'label' => t('Change type'),
-          'restiction' => 'input',
-        ),
-        'local_entity_id' => array(
-          'type' => 'integer',
-          'label' => t('Local entity id'),
-          'optional' => TRUE,
-        ),
       ),
     );
   }

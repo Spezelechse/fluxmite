@@ -24,8 +24,8 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBaseExtended {
 
     //workaround for time_entries
     if($type=='time'){
-      $mite_type.=$type.'-'.$type_split[2];
-      $this->task['remote_type']=$mite_type;
+      $this->task['remote_type']=$type.'-'.$type_split[2];
+      $this->task['entity_type']=$type.'_'.$type_split[2];
     }
   }
   
@@ -36,28 +36,27 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBaseExtended {
     $data_sets=array();
 
     $client=$this->getAccount()->client();
-
+    $account=$this->getAccount();
 
     //get all mite data
     $operation='get'.ucfirst($this->getEntityType()).'s';
     
     try{
-      $data_sets = $account->client()->$operation(array('api_key' => $account->getAccessToken()));
-        
-      //$pattern = '~(?:<|\G(?<!^))(?:[^>-]+)*\K\-~';
+      $data_sets = $client->$operation(array('api_key' => $account->getAccessToken()));
 
       //generate an array from xml
       $data_sets = json_decode(json_encode($data_sets),1);
+      
       $data_sets = $data_sets[$this->getRemoteType()];
 
       //workaround for single response
-      if(!isset($data_sets[$mite_type][0])){
+      if(!isset($data_sets[0])){
         $data_sets=array($data_sets);
       }
     }
     catch(BadResponseException $e){
       if($e->getResponse()->getStatusCode()==404){
-        watchdog('Fluxmite','[404] Host "'.$account->client()->getBaseUrl().'" not found ('.$operation.')');
+        watchdog('Fluxmite','[404] Host "'.$client->getBaseUrl().'" not found ('.$operation.')');
       }
     }
 
