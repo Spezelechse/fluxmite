@@ -65,8 +65,8 @@ class createDateStruct extends RulesPluginHandlerBase implements \RulesActionHan
    * Executes the action.
    */
   public function execute($start, $duration) {
-    dpm("create date struct");
-    print_r("create date struct<br>");
+//    dpm("create date struct");
+  //  print_r("create date struct<br>");
 
     $date_struct=array();
     $date_struct['value']=$start;

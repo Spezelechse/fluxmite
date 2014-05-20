@@ -46,12 +46,16 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBaseExtended {
 
       //generate an array from xml
       $data_sets = json_decode(json_encode($data_sets),1);
-      
-      $data_sets = $data_sets[$this->getRemoteType()];
-
-      //workaround for single response
-      if(!isset($data_sets[0])){
-        $data_sets=array($data_sets);
+      if(isset($data_sets[$this->getRemoteType()])){
+        $data_sets = $data_sets[$this->getRemoteType()];
+        
+        //workaround for single response
+        if(!isset($data_sets[0])){
+          $data_sets=array($data_sets);
+        }
+      }
+      else{
+        $data_sets=array();
       }
     }
     catch(BadResponseException $e){
@@ -59,7 +63,8 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBaseExtended {
         watchdog('Fluxmite','[404] Host "'.$client->getBaseUrl().'" not found ('.$operation.')');
       }
     }
-
+    print_r($data_sets);
+    print_r("<br>");
     return $data_sets;
   }
 
