@@ -8,6 +8,7 @@
 namespace Drupal\fluxmite;
 
 use Drupal\fluxservice_extension\RemoteEntityControllerExtended;
+use Drupal\fluxservice_extension\FluxserviceTaskQueue;
 use Guzzle\Http\Exception\BadResponseException;
 
 /**
@@ -109,7 +110,7 @@ abstract class MiteControllerBase extends RemoteEntityControllerExtended {
     $document_not_found_eng="The record does not exist";
 
     if($data!=array()&&!strpos($response_message,$document_not_found_eng)&&!strpos($response_message,$document_not_found_de)){
-      MiteTaskQueue::addTask($data);
+      FluxserviceTaskQueue::addTask($data);
       watchdog('Fluxmite',$log_message);
       return false;
     }

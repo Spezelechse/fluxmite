@@ -19,9 +19,8 @@ class MiteTimeEntryTaskHandler extends MiteTaskHandlerBase {
   public function runTask() {
     if($this->checkDependencies()){
     	print_r("<br>time entry<br>");
-    	$this->processQueue();
   	  $this->checkAndInvoke();
     }
-    $this->afterTaskComplete();
+    $this->adjustExecutionOrder();
   }
 }

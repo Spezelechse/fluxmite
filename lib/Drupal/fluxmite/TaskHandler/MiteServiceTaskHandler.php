@@ -17,7 +17,6 @@ class MiteServiceTaskHandler extends MiteTaskHandlerBase {
    */
   public function runTask() {
 	print_r("<br>service<br>");
-  	$this->processQueue();
 	$this->checkAndInvoke();
   }
 }

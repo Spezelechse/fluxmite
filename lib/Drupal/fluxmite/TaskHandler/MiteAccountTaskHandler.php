@@ -17,7 +17,6 @@ class MiteAccountTaskHandler extends MiteTaskHandlerBase {
    */
   public function runTask() {
 	print_r("<br>account<br>");
-  	$this->processQueue();
 	$this->checkAndInvoke();
   }
 }

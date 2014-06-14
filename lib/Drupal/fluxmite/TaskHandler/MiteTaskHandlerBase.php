@@ -63,8 +63,6 @@ class MiteTaskHandlerBase extends RepetitiveTaskHandlerBaseExtended {
         watchdog('Fluxmite','[404] Host "'.$client->getBaseUrl().'" not found ('.$operation.')');
       }
     }
-    print_r($data_sets);
-    print_r("<br>");
     return $data_sets;
   }
 
