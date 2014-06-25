@@ -48,11 +48,13 @@ class fetchUserById extends RulesPluginHandlerBase implements \RulesActionHandle
    * Executes the action.
    */
   public function execute($account, $remote_id, $remote_entity) {
-
-    $controller=entity_get_controller('fluxmite_user');
-
     $type='fluxmite_user';
-    $user=$controller->loadRemote($remote_id, $account);
+
+    $controller=entity_get_controller($type);
+
+    $remote=$this->loadFromService(array($remote_id), $agent);
+
+    $user=fluxservice_entify($remote[$id], $type, $agent);
 
     if(!$user){
       $type=$remote_entity->entityType();

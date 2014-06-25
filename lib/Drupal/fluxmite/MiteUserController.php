@@ -49,9 +49,4 @@ class MiteUserController extends MiteControllerBase {
   protected function sendToService(RemoteEntityInterface $entity) {
     // @todo Throw exception.
   }
-
-  public function loadRemote($id, $agent){
-    $remote=$this->loadFromService(array($id), $agent);
-    return fluxservice_entify($remote[$id], 'fluxmite_user', $agent);
-  }
 }

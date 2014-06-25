@@ -62,6 +62,10 @@ class extractDataFromComment extends RulesPluginHandlerBase implements \RulesAct
   public function execute($comment) {
 //    dpm("extract from comment");
   //  print_r("extract from comment<br>");
+    $pos=strpos($comment, '[');
+
+    $comment=substr($comment, $pos);
+
     $comment_data=array();
 
     $comment=explode(']', $comment);
