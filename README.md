@@ -5,7 +5,7 @@ flux Mite is a Drupal 7 module which integrates the whole Mite REST API into Dru
 
 A small guide which shows how to use this module with rules can be found [here](https://github.com/Spezelechse/fluxmite/blob/master/Fluxmite%20Rules%20Guide.pdf).
 
-This was part of my bachelor thesis
+This was part of my bachelor thesis.
 
 The other parts can be found at:
 
